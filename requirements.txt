@@ -1,0 +1,12 @@
+dataclasses-json
+deprecated
+overrides
+numpy
+scipy
+scikit-learn
+librosa
+matplotlib
+yellowbrick
+onnx
+onnxruntime
+skl2onnx
