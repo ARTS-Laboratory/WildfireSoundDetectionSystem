@@ -1,8 +1,9 @@
+from typing import List
 import numpy as np
 
 
-def slice_spectrogram(spectrogram: np.ndarray, shingle_size: int,
-                      stride_size: int) -> np.ndarray:
+def slice_spectrogram(spectrogram: np.ndarray, slice_size: int,
+                      stride_size: int) -> List[np.ndarray]:
     """Slice a spectrogram.
 
     Args:
@@ -13,11 +14,10 @@ def slice_spectrogram(spectrogram: np.ndarray, shingle_size: int,
     Returns:
         slices (np.ndarray): (n_slices, n_sample_freq, shingle_size) sliced spectrogram for the given raw_spectrogram.
     """
-    n_sample_freq: int = spectrogram.shape[1]
-    slices: np.ndarray = np.array([n_sample_freq, 0], dtype=float)
-    for i in range(0, spectrogram.shape[1] - shingle_size + 1, stride_size):
-        curr_slice: np.ndarray = spectrogram[:, i:i + shingle_size]
-        slices = np.append(slices, curr_slice, axis=1)
+    slices: List[np.ndarray] = list()
+    for i in range(0, spectrogram.shape[1] - slice_size + 1, stride_size):
+        curr_slice: np.ndarray = spectrogram[:, i:i + slice_size]
+        slices.append(curr_slice)
     return slices
 
 
@@ -28,7 +28,10 @@ def flatten_slice(slice: np.ndarray) -> np.ndarray:
         slice (np.ndarray): (n_sample_freq, shingle_size)
 
     Returns:
-        flat_slice (np.ndarray): (n_sample_freq * shingle_size)
+        flat_slice (np.ndarray): (n_sample_freq * shingle_size) `[slice[:, 0].T, slice[:, 1].T, ..., slice[:, shingle_size-1].T]`
     """
-    flat_slice: np.ndarray = slice.reshape(order="F")
+    n_sample_freq: int = slice.shape[0]
+    shingle_size: int = slice.shape[1]
+    flat_slice: np.ndarray = slice.reshape((n_sample_freq * shingle_size),
+                                           order="F")
     return flat_slice
