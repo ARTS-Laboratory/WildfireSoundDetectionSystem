@@ -53,6 +53,7 @@ mel_spec_slices: List[np.ndarray] = reshape.slice_spectrogram(
 
 #%% [markdown]
 # ## result verified
+
 #%%
 is_succeed: bool = True
 for curr_slice in mel_spec_slices:
