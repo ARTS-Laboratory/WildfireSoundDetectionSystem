@@ -37,7 +37,7 @@ def transform_stft_spectrogram(
                                                  hop_length=hop_size,
                                                  n_fft=n_fft)
     if apply_log is True:
-        stft_spec = np.log10(stft_spec)
+        stft_spec = 10 * np.log10(stft_spec)
     return stft_spec, stft_freq, stft_time
 
 
@@ -71,6 +71,7 @@ def transform_mel_spectrogram(
     stft_spec = np.abs(stft_spec)
     mel_spec: np.ndarray = rosa_feature.melspectrogram(S=stft_spec**2,
                                                        sr=sample_rate,
+                                                       n_mels=n_mels,
                                                        n_fft=n_fft,
                                                        hop_length=hop_size,
                                                        win_length=window_size,
@@ -86,5 +87,5 @@ def transform_mel_spectrogram(
                                                 hop_length=hop_size,
                                                 n_fft=n_fft)
     if apply_log is True:
-        mel_spec = np.log10(mel_spec)
+        mel_spec = 10 * np.log10(mel_spec)
     return mel_spec, mel_freq, mel_time
