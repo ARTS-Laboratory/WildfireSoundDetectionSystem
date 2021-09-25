@@ -55,6 +55,7 @@ mel_spec_slices: List[np.ndarray] = reshape.slice_spectrogram(
 # ## result verified
 
 #%%
+flatten_slices: List[np.ndarray] = list()
 is_succeed: bool = True
 for curr_slice in mel_spec_slices:
     curr_flat_slice = reshape.flatten_slice(curr_slice)
@@ -62,5 +63,19 @@ for curr_slice in mel_spec_slices:
     if is_succeed == False:
         print("failed")
         break
+    flatten_slices.append(curr_flat_slice)
 if is_succeed == True:
     print("pass")
+#%%
+is_succeed = True
+for curr_flat_slice, curr_slice in zip(flatten_slices, mel_spec_slices):
+    curr_slice_restored = reshape.unflatten_slice(flat_slice=curr_flat_slice,
+                                                  slice_size=SLICE_SIZE)
+    is_succeed = is_succeed and np.all(
+        np.equal(curr_slice, curr_slice_restored))
+    if is_succeed == False:
+        print("failed")
+        break
+if is_succeed == True:
+    print("pass")
+# %%
