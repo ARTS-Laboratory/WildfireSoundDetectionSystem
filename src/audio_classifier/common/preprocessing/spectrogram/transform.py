@@ -38,6 +38,11 @@ def transform_stft_spectrogram(
                                                  n_fft=n_fft)
     if apply_log is True:
         stft_spec = 10 * np.log10(stft_spec)
+        stft_spec = np.nan_to_num(stft_spec,
+                                  copy=False,
+                                  nan=0.0,
+                                  posinf=0.0,
+                                  neginf=0.0)
     return stft_spec, stft_freq, stft_time
 
 
@@ -88,4 +93,9 @@ def transform_mel_spectrogram(
                                                 n_fft=n_fft)
     if apply_log is True:
         mel_spec = 10 * np.log10(mel_spec)
+        mel_spec = np.nan_to_num(mel_spec,
+                                 copy=False,
+                                 nan=0.0,
+                                 posinf=0.0,
+                                 neginf=0.0)
     return mel_spec, mel_freq, mel_time
