@@ -6,7 +6,7 @@ import numpy as np
 from audio_classifier.common.preprocessing.spectrogram import transform
 
 #%%
-AUDIO_PATH: str = "../test_audio/17592-5-1-1.wav"
+AUDIO_PATH: str = "../../test_audio/17592-5-1-1.wav"
 SAMPLE_RATE: int = 44100
 WINDOW_SIZE: int = 1024
 NFFT: int = 1024
