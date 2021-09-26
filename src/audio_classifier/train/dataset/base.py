@@ -6,6 +6,7 @@ import numpy as np
 from overrides import overrides
 from torch.utils.data import Dataset
 
+DataPointType = Tuple[np.ndarray, int]
 
 class FolderDataset(Dataset):
 
@@ -15,7 +16,6 @@ class FolderDataset(Dataset):
     __cache: bool
     __filenames: List[str]
 
-    DataPointType = Tuple[np.ndarray, int]
     __data_: Optional[List[Union[DataPointType, None]]]
 
     def __init__(self,
@@ -105,7 +105,7 @@ class FolderDataset(Dataset):
                 "Attempt to access self.__data_ when self.__cache is set to False"
             )
         filename: str = self.__filenames[index]
-        data_point: Union[FolderDataset.DataPointType, None] = self.__data_[index]
+        data_point: Union[DataPointType, None] = self.__data_[index]
         if data_point is not None:
             return filename, *data_point
         filename, sound_wave, label = self.__load_single_audio(index=index)
