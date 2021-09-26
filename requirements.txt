@@ -10,3 +10,4 @@ yellowbrick
 onnx
 onnxruntime
 skl2onnx
+torch
