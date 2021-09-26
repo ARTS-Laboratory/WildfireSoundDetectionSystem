@@ -1,9 +1,13 @@
 #%%
+from os import path
 from typing import Any, Dict, List
+
+import numpy as np
 
 import audio_classifier.train.dataset.base as dataset_base
 import audio_classifier.train.dataset.utils.metadata.query as metadata_query
 import audio_classifier.train.dataset.utils.metadata.reader as metadata_reader
+import librosa.core as rosa_core
 from torch.utils.data import DataLoader, get_worker_info
 
 #%%
@@ -30,12 +34,19 @@ dataset = dataset_base.FolderDataset(path_to_folder=PATH_TO_FOLDER_DATASET,
 
 
 #%%
-def identity_collate_function(data: List[List]):
+def verify_collate_function(data):
+    print(get_worker_info())
     n_items: int = len(data[0])
-    ret_data: List[List[Any]] = [list() for _ in range(0, n_items)]
+    ret_data: List[List[Any]] = [list() for _ in range(0, n_items + 1)]
     for data_point in data:
         for j, item in enumerate(data_point):
             ret_data[j].append(item)
+        path_to_file: str = path.join(PATH_TO_FOLDER_DATASET, data_point[0])
+        sound_wave_gt, _ = rosa_core.load(path=path_to_file,
+                                          sr=44100,
+                                          mono=True)
+        is_pass: bool = np.array_equal(sound_wave_gt, data_point[1])
+        ret_data[-1].append(is_pass)
     return ret_data
 
 
@@ -43,7 +54,8 @@ def identity_collate_function(data: List[List]):
 loader = DataLoader(dataset=dataset,
                     batch_size=2,
                     num_workers=3,
-                    collate_fn=identity_collate_function)
-for filename, sound_wave, label in loader:
-    print(str.format("{} {} {}", type(filename), type(sound_wave),
-                     type(label)))
+                    collate_fn=verify_collate_function)
+for filename, sound_wave, label, is_pass in loader:
+    print(
+        str.format("{} {} {} {}", type(filename), type(sound_wave),
+                   type(label), np.all(is_pass)))
