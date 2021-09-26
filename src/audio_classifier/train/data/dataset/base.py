@@ -111,3 +111,4 @@ class FolderDataset(Dataset):
         filename, sound_wave, label = self.__load_single_audio(index=index)
         self.__data_[index] = (sound_wave, label)
         return filename, sound_wave, label
+

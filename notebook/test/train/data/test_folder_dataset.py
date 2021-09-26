@@ -4,9 +4,9 @@ from typing import Any, Dict, List
 
 import numpy as np
 
-import audio_classifier.train.dataset.base as dataset_base
-import audio_classifier.train.dataset.utils.metadata.query as metadata_query
-import audio_classifier.train.dataset.utils.metadata.reader as metadata_reader
+import audio_classifier.train.data.dataset.base as dataset_base
+import audio_classifier.train.data.metadata.query as metadata_query
+import audio_classifier.train.data.metadata.reader as metadata_reader
 import librosa.core as rosa_core
 from torch.utils.data import DataLoader, get_worker_info
 
