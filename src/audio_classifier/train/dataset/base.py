@@ -60,6 +60,9 @@ class FolderDataset(Dataset):
         if self.__cache == False:
             return self.__load_single_audio(index=index)
         return self.__get_item_from_cache(index=index)
+    
+    def __len__(self):
+        return len(self.__filenames)
 
     def __load_single_audio(self, index: int) -> Tuple[str, np.ndarray, int]:
         """Load the sound wave from the filesystem.
