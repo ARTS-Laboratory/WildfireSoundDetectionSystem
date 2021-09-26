@@ -22,7 +22,7 @@ class FolderDataset(Dataset):
                  path_to_folder: str,
                  sample_rate: int,
                  filename_to_label_func: Callable[[str], int],
-                 cache: bool = True):
+                 cache: bool = True) -> None:
         """Constructor for FolderDataset
 
         Args:
