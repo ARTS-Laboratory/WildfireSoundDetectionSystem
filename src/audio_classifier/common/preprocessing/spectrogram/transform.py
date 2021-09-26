@@ -12,7 +12,7 @@ def transform_stft_spectrogram(
     """Transform a sound wave to stft-spectrogram.
 
     Args:
-        sound_wave (np.ndarray): (sample_rate*n_secs) The sound wave to be transformed.
+        sound_wave (np.ndarray): (sample_rate*n_secs, ) The sound wave to be transformed.
         sample_rate (int): Sample rate of the `sound_wave`.
         n_fft (int): Number of FFT components.
         window_size (int): Each frame of audio is windowed by window of length `window_size` and then padded with zeros to match `n_fft`.
@@ -53,7 +53,7 @@ def transform_mel_spectrogram(
     """Transform a sound wave to mel-spectrogram.
 
     Args:
-        sound_wave (np.ndarray): (sample_rate*n_secs) The sound wave to be transformed.
+        sound_wave (np.ndarray): (sample_rate*n_secs, ) The sound wave to be transformed.
         sample_rate (int): Sample rate of the `sound_wave`.
         n_fft (int): Number of FFT components.
         n_mels (int): Number of Mel bands to generate.
