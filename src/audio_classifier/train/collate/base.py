@@ -20,11 +20,13 @@ def identity_collate_function(data: Union[List[Tuple], List]) -> List[List]:
 
 class EnsembleCollateFunction():
 
-    __collate_funcs: Sequence[Callable[[List[Tuple]], List[Tuple]]]
+    __collate_funcs: Sequence[Callable[[Union[List[Tuple], List]],
+                                       Union[List[Tuple], List]]]
 
     def __init__(
-            self, collate_funcs: Sequence[Callable[[List[Tuple]],
-                                                   List[Tuple]]]) -> None:
+        self, collate_funcs: Sequence[Callable[[Union[List[Tuple], List]],
+                                               Union[List[Tuple], List]]]
+    ) -> None:
         """The constructor for EnsembleCollateFunction
 
         Args:
@@ -32,7 +34,7 @@ class EnsembleCollateFunction():
         """
         self.__collate_funcs = collate_funcs
 
-    def __call__(self, data: List[Tuple]) -> List[List]:
+    def __call__(self, data: Union[List[Tuple], List]) -> List[List]:
         """Transform the data with multiple collate function in `collate_funcs` and reshape with `identity_collate_function`.
 
         Args:
