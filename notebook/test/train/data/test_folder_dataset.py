@@ -39,6 +39,7 @@ def verify_collate_function(data):
     n_items: int = len(data[0])
     ret_data: List[List[Any]] = [list() for _ in range(0, n_items + 1)]
     for data_point in data:
+        print(type(data_point))
         for j, item in enumerate(data_point):
             ret_data[j].append(item)
         path_to_file: str = path.join(PATH_TO_FOLDER_DATASET, data_point[0])
@@ -59,3 +60,16 @@ for filename, sound_wave, label, is_pass in loader:
     print(
         str.format("{} {} {} {}", type(filename), type(sound_wave),
                    type(label), np.all(is_pass)))
+
+#%%
+from audio_classifier.train.data.collate import base
+
+loader = DataLoader(dataset=dataset,
+                    batch_size=2,
+                    num_workers=3,
+                    collate_fn=base.identity_collate_function)
+for filename, sound_wave, label in loader:
+    print(
+        str.format("{} {} {}", type(filename), type(sound_wave),
+                   type(label)))
+# %%
