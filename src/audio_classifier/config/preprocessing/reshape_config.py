@@ -2,6 +2,7 @@
 """
 import dataclasses
 import sys
+from argparse import ArgumentParser, HelpFormatter
 from dataclasses import dataclass
 
 from dataclasses_json import dataclass_json
@@ -46,3 +47,35 @@ def get_feature_vector_config_from_json(
         print(str(e), file=sys.stderr)
         config = ReshapeConfig()
     return config
+
+
+class ReshapeConfigArgumentParser(ArgumentParser):
+    def __init__(self,
+                 prog=None,
+                 usage=None,
+                 description=None,
+                 epilog=None,
+                 parents=[],
+                 formatter_class=HelpFormatter,
+                 prefix_chars='-',
+                 fromfile_prefix_chars=None,
+                 argument_default=None,
+                 conflict_handler='error',
+                 add_help=False,
+                 allow_abbrev=True):
+        super().__init__(prog=prog,
+                         usage=usage,
+                         description=description,
+                         epilog=epilog,
+                         parents=parents,
+                         formatter_class=formatter_class,
+                         prefix_chars=prefix_chars,
+                         fromfile_prefix_chars=fromfile_prefix_chars,
+                         argument_default=argument_default,
+                         conflict_handler=conflict_handler,
+                         add_help=add_help,
+                         allow_abbrev=allow_abbrev)
+        self.add_argument("--reshape_config_file",
+                          required=True,
+                          type=str,
+                          help="path to the reshape configuration *.json file")
