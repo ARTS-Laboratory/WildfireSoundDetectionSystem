@@ -2,8 +2,8 @@ from typing import List, Tuple
 
 import numpy as np
 
-from ....common.preprocessing.spectrogram import transform
-from ....config.preprocessing import spec_config
+from .....common.preprocessing.spectrogram import transform
+from .....config.preprocessing import spec_config
 
 
 def transform_stft_spectrogram_collate(data: List[Tuple[str, np.ndarray, int]],
