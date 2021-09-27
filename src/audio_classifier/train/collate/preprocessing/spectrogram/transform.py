@@ -6,8 +6,9 @@ from .....common.preprocessing.spectrogram import transform
 from .....config.preprocessing import spec_config
 
 
-def stft_spectrogram_collate(data: List[Tuple[str, np.ndarray, int]],
-                                       config: spec_config.STFTSpecConfig):
+def stft_spectrogram_collate(
+    data: List[Tuple[str, np.ndarray, int]], config: spec_config.STFTSpecConfig
+) -> List[Tuple[str, np.ndarray, np.ndarray, np.ndarray, int]]:
     """Transfrom a batch of data from time domain signal to frequency domain signal
 
     Args:
@@ -31,8 +32,9 @@ def stft_spectrogram_collate(data: List[Tuple[str, np.ndarray, int]],
     return ret_data
 
 
-def mel_spectrogram_collate(data: List[Tuple[str, np.ndarray, int]],
-                                      config: spec_config.MelSpecConfig):
+def mel_spectrogram_collate(
+    data: List[Tuple[str, np.ndarray, int]], config: spec_config.MelSpecConfig
+) -> List[Tuple[str, np.ndarray, np.ndarray, np.ndarray, int]]:
     """[summary]
 
     Args:
@@ -40,7 +42,7 @@ def mel_spectrogram_collate(data: List[Tuple[str, np.ndarray, int]],
         config (spec_config.MelSpecConfig): The configuration used to generate mel-spectrogram.
 
     Returns:
-        [type]: [description]
+        ret_data (List[Tuple[str, np.ndarray, np.ndarray, np.ndarray, int]]): (n_batch, ) The transformed dataset with each data point being a tuple of (filename, mel_spec, mel_freq, mel_time, label).
     """
     ret_data: List[Tuple[str, np.ndarray, np.ndarray, np.ndarray,
                          int]] = list()
