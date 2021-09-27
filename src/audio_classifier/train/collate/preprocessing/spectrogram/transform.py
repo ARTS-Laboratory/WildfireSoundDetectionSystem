@@ -6,7 +6,7 @@ from .....common.preprocessing.spectrogram import transform
 from .....config.preprocessing import spec_config
 
 
-def transform_stft_spectrogram_collate(data: List[Tuple[str, np.ndarray, int]],
+def stft_spectrogram_collate(data: List[Tuple[str, np.ndarray, int]],
                                        config: spec_config.STFTSpecConfig):
     """Transfrom a batch of data from time domain signal to frequency domain signal
 
@@ -31,7 +31,7 @@ def transform_stft_spectrogram_collate(data: List[Tuple[str, np.ndarray, int]],
     return ret_data
 
 
-def transform_mel_spectrogram_collate(data: List[Tuple[str, np.ndarray, int]],
+def mel_spectrogram_collate(data: List[Tuple[str, np.ndarray, int]],
                                       config: spec_config.MelSpecConfig):
     """[summary]
 
@@ -46,7 +46,7 @@ def transform_mel_spectrogram_collate(data: List[Tuple[str, np.ndarray, int]],
                          int]] = list()
     freq_max: float = config.freq_max if config.freq_max > 0.0 else config.sample_rate / 2.0
     for filename, sound_wave, label in data:
-        stft_spec, stft_freq, stft_time = transform.transform_mel_spectrogram(
+        mel_spec, mel_freq, mel_time = transform.transform_mel_spectrogram(
             sound_wave=sound_wave,
             sample_rate=config.sample_rate,
             n_fft=config.n_fft,
@@ -56,5 +56,5 @@ def transform_mel_spectrogram_collate(data: List[Tuple[str, np.ndarray, int]],
             window_size=config.window_size,
             hop_size=config.hop_size,
             apply_log=config.apply_log)
-        ret_data.append((filename, stft_spec, stft_freq, stft_time, label))
+        ret_data.append((filename, mel_spec, mel_freq, mel_time, label))
     return ret_data
