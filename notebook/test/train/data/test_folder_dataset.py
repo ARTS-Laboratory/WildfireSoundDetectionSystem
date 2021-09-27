@@ -2,12 +2,12 @@
 from os import path
 from typing import Any, Dict, List
 
-import numpy as np
-
 import audio_classifier.train.data.dataset.base as dataset_base
 import audio_classifier.train.data.metadata.query as metadata_query
 import audio_classifier.train.data.metadata.reader as metadata_reader
 import librosa.core as rosa_core
+import numpy as np
+from audio_classifier.train.collate import base
 from torch.utils.data import DataLoader, get_worker_info
 
 #%%
@@ -62,14 +62,11 @@ for filename, sound_wave, label, is_pass in loader:
                    type(label), np.all(is_pass)))
 
 #%%
-from audio_classifier.train.data.collate import base
-
 loader = DataLoader(dataset=dataset,
                     batch_size=2,
                     num_workers=3,
                     collate_fn=base.identity_collate_function)
 for filename, sound_wave, label in loader:
-    print(
-        str.format("{} {} {}", type(filename), type(sound_wave),
-                   type(label)))
+    print(str.format("{} {} {}", type(filename), type(sound_wave),
+                     type(label)))
 # %%
