@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 from typing import Type, TypeVar
 
 from dataclasses_json import dataclass_json
+from overrides import overrides
 
 
 @dataclass_json
@@ -30,6 +31,9 @@ class STFTSpecConfig:
     hop_size: int = field(default=256)
     apply_log: bool = field(default=True)
 
+    def __post_init__(self):
+        return
+
 
 @dataclass_json
 @dataclass(init=True,
@@ -49,6 +53,11 @@ class MelSpecConfig(STFTSpecConfig):
     n_mels: int = field(default=40)
     freq_min: float = field(default=0.0)
     freq_max: float = field(default=-1.0)
+
+    @overrides
+    def __post_init__(self):
+        if self.freq_max < 0.0:
+            self.freq_max = self.sample_rate / 2.0
 
 
 SpectrogramConfigType = TypeVar("SpectrogramConfigType", STFTSpecConfig,
@@ -78,6 +87,5 @@ def get_spec_config_from_json(
         print("spectrogram_config", file=sys.stderr)
         print(str(e), file=sys.stderr)
         config = ConfigType()
-    if isinstance(config, MelSpecConfig) and config.freq_max < 0.0:
-        config.freq_max = config.sample_rate / 2.0
+    config.__post_init__()
     return config
