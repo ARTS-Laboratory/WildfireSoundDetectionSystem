@@ -10,8 +10,8 @@ import audio_classifier.train.data.metadata.query as metadata_query
 import audio_classifier.train.data.metadata.reader as metadata_reader
 import numpy as np
 from audio_classifier.common.preprocessing.spectrogram import reshape
-from audio_classifier.config.preprocessing.reshape_config import ReshapeConfig
-from audio_classifier.config.preprocessing.spec_config import MelSpecConfig
+from audio_classifier.config.preprocessing.reshape import ReshapeConfig
+from audio_classifier.config.preprocessing.spec import MelSpecConfig
 from torch.utils.data import DataLoader
 
 #%%
@@ -23,14 +23,14 @@ metadata: List[Dict[str, str]] = metadata_reader.read_csv_metadata(
     path_to_metadata=PATH_TO_METADATA)
 
 #%%
-query = metadata_query.DictMetaDataQuery(metadata=metadata,
-                                         filename_key="slice_file_name",
-                                         label_key="classID")
+query = metadata_query.DictMetaDataQuerier(metadata=metadata,
+                                           filename_key="slice_file_name",
+                                           label_key="classID")
 
 #%%
 mel_config: MelSpecConfig = MelSpecConfig()
 reshape_config: ReshapeConfig = ReshapeConfig()
-dataset = dataset_base.FolderDataset(path_to_folder=PATH_TO_FOLDER_DATASET,
+dataset = dataset_base.FolderDataset(folder_path=PATH_TO_FOLDER_DATASET,
                                      sample_rate=mel_config.sample_rate,
                                      filename_to_label_func=query,
                                      cache=True)

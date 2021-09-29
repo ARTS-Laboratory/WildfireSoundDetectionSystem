@@ -19,15 +19,15 @@ metadata: List[Dict[str, str]] = metadata_reader.read_csv_metadata(
     path_to_metadata=PATH_TO_METADATA)
 
 #%%
-query = metadata_query.DictMetaDataQuery(metadata=metadata,
-                                         filename_key="slice_file_name",
-                                         label_key="classID")
+query = metadata_query.DictMetaDataQuerier(metadata=metadata,
+                                           filename_key="slice_file_name",
+                                           label_key="classID")
 
 #%%
 print(query("529_1.wav"))
 
 # #%%
-dataset = dataset_base.FolderDataset(path_to_folder=PATH_TO_FOLDER_DATASET,
+dataset = dataset_base.FolderDataset(folder_path=PATH_TO_FOLDER_DATASET,
                                      sample_rate=44100,
                                      filename_to_label_func=query,
                                      cache=True)
