@@ -3,7 +3,7 @@ from typing import Dict, List
 from overrides import overrides
 
 
-class MetadataQueryBase(ABC):
+class MetadataQuerierBase(ABC):
     @abstractmethod
     def __call__(self, filename: str) -> int:
         """Query the class label correspond to the given filename.
@@ -21,7 +21,7 @@ class MetadataQueryBase(ABC):
             "MetaDataQueryBase must be overridden by subclass")
 
 
-class DictMetaDataQuery(MetadataQueryBase):
+class DictMetaDataQuerier(MetadataQuerierBase):
 
     __metadata: List[Dict[str, str]]
     __filename_key: str
