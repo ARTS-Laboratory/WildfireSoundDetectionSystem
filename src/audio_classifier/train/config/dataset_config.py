@@ -1,4 +1,5 @@
 from abc import ABC
+from argparse import ArgumentParser, HelpFormatter
 from dataclasses import dataclass, field
 from typing import Type, TypeVar
 
@@ -59,3 +60,39 @@ def get_dataset_config_from_json(
         raise e
     config.__post_init__()
     return config
+
+
+class PreSplitFoldDatasetArgumentParser(ArgumentParser):
+    def __init__(self,
+                 prog=None,
+                 usage=None,
+                 description=None,
+                 epilog=None,
+                 parents=[],
+                 formatter_class=HelpFormatter,
+                 prefix_chars='-',
+                 fromfile_prefix_chars=None,
+                 argument_default=None,
+                 conflict_handler='error',
+                 add_help=False,
+                 allow_abbrev=True):
+        super().__init__(prog=prog,
+                         usage=usage,
+                         description=description,
+                         epilog=epilog,
+                         parents=parents,
+                         formatter_class=formatter_class,
+                         prefix_chars=prefix_chars,
+                         fromfile_prefix_chars=fromfile_prefix_chars,
+                         argument_default=argument_default,
+                         conflict_handler=conflict_handler,
+                         add_help=add_help,
+                         allow_abbrev=allow_abbrev)
+        self.add_argument("--path_to_dataset",
+                          type=str,
+                          required=True,
+                          help="path to the dataset root path")
+        self.add_argument("--path_to_metadata",
+                          type=str,
+                          required=True,
+                          help="path to the metadata")
