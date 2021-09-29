@@ -3,17 +3,17 @@ from typing import List, Tuple
 import numpy as np
 
 from .....common.preprocessing.spectrogram import transform
-from .....config.preprocessing import spec_config
+from .....config.preprocessing import spec as conf_spec
 
 
 def stft_spectrogram_collate(
-    data: List[Tuple[str, np.ndarray, int]], config: spec_config.STFTSpecConfig
+    data: List[Tuple[str, np.ndarray, int]], config: conf_spec.STFTSpecConfig
 ) -> List[Tuple[str, np.ndarray, np.ndarray, np.ndarray, int]]:
     """Transfrom a batch of data from time domain signal to frequency domain signal
 
     Args:
         data (List[Tuple[str, np.ndarray, int]]): (n_batch, ) The data from upstream sound wave dataset loader.
-        config (spec_config.MelSpecConfig): The configuration used to generate stft-spectrogram.
+        config (conf_spec.MelSpecConfig): The configuration used to generate stft-spectrogram.
 
     Returns:
         ret_data (List[Tuple[str, np.ndarray, np.ndarray, np.ndarray, int]]): (n_batch, ) The transformed dataset with each data point being a tuple of (filename, stft_spec, stft_freq, stft_time, label).
@@ -33,13 +33,13 @@ def stft_spectrogram_collate(
 
 
 def mel_spectrogram_collate(
-    data: List[Tuple[str, np.ndarray, int]], config: spec_config.MelSpecConfig
+    data: List[Tuple[str, np.ndarray, int]], config: conf_spec.MelSpecConfig
 ) -> List[Tuple[str, np.ndarray, np.ndarray, np.ndarray, int]]:
     """[summary]
 
     Args:
         data (List[Tuple[str, np.ndarray, int]]): (n_batch, ) The data from upstream sound wave dataset loader.
-        config (spec_config.MelSpecConfig): The configuration used to generate mel-spectrogram.
+        config (conf_spec.MelSpecConfig): The configuration used to generate mel-spectrogram.
 
     Returns:
         ret_data (List[Tuple[str, np.ndarray, np.ndarray, np.ndarray, int]]): (n_batch, ) The transformed dataset with each data point being a tuple of (filename, mel_spec, mel_freq, mel_time, label).

@@ -3,12 +3,12 @@ from typing import List, Tuple
 import numpy as np
 
 from .....common.preprocessing.spectrogram import reshape
-from audio_classifier.config.preprocessing import reshape_config
+from .....config.preprocessing import reshape as conf_reshape
 
 
 def slice_flatten_collate(
     data: List[Tuple[str, np.ndarray, np.ndarray, np.ndarray, int]],
-    config: reshape_config.ReshapeConfig,
+    config: conf_reshape.ReshapeConfig,
     copy: bool = False
 ) -> List[Tuple[str, List[np.ndarray], np.ndarray, np.ndarray, int]]:
     """For a batch of data, slice and flatten each spectrograms into a list of vectors.

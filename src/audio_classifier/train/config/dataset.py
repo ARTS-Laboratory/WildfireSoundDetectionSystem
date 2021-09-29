@@ -25,22 +25,26 @@ class DatasetConfigBase(ABC):
            order=False,
            unsafe_hash=False,
            frozen=False)
-class PreSplitFoldDataset(ABC):
+class PreSplitFoldDatasetConfig(ABC):
 
-    path_to_root: str = field()
-    path_to_metadata: str = field()
+    root_path: str = field()
+    metadata_path: str = field()
+    fold_path_stub: str = field()
+    k_folds: int = field()
+    filename_key: str = field()
+    label_key: str = field()
 
     def __post_init__(self):
         pass
 
 
 DatasetConfigType = TypeVar("DatasetConfigType", DatasetConfigBase,
-                            PreSplitFoldDataset)
+                            PreSplitFoldDatasetConfig)
 
 
 def get_dataset_config_from_json(
         config_file_path: str,
-        ConfigType: Type[DatasetConfigType]) -> DatasetConfigType:
+        ConfigType: Type[DatasetConfigType]) -> "ConfigType":
     """Get SpectrogramConfig from a json file.
 
     If exception encountered while reading the json file, default value will be assigned to SpectrogramConfig.
@@ -62,7 +66,7 @@ def get_dataset_config_from_json(
     return config
 
 
-class PreSplitFoldDatasetArgumentParser(ArgumentParser):
+class DatasetConfigArgumentParser(ArgumentParser):
     def __init__(self,
                  prog=None,
                  usage=None,
@@ -88,11 +92,7 @@ class PreSplitFoldDatasetArgumentParser(ArgumentParser):
                          conflict_handler=conflict_handler,
                          add_help=add_help,
                          allow_abbrev=allow_abbrev)
-        self.add_argument("--path_to_dataset",
+        self.add_argument("--dataset_config_path",
                           type=str,
                           required=True,
-                          help="path to the dataset root path")
-        self.add_argument("--path_to_metadata",
-                          type=str,
-                          required=True,
-                          help="path to the metadata")
+                          help="path to the dataset configuration *.json file")

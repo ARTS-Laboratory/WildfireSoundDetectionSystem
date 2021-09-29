@@ -26,8 +26,7 @@ class ReshapeConfig:
     stride_size: int = dataclasses.field(default=5)
 
 
-def get_feature_vector_config_from_json(
-        config_file_path: str) -> ReshapeConfig:
+def get_reshape_config_from_json(config_file_path: str) -> ReshapeConfig:
     """Get FeatureVectorConfig from a json file.
 
     If exception encountered while reading the json file, default value will be assigned to FeatureVectorConfig.
@@ -75,7 +74,7 @@ class ReshapeConfigArgumentParser(ArgumentParser):
                          conflict_handler=conflict_handler,
                          add_help=add_help,
                          allow_abbrev=allow_abbrev)
-        self.add_argument("--reshape_config_file",
+        self.add_argument("--reshape_config_path",
                           required=True,
                           type=str,
                           help="path to the reshape configuration *.json file")
