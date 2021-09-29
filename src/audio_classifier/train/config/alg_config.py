@@ -1,4 +1,4 @@
-"""The module contains all the functions and classes related to spectrogram configuration.
+"""The module contains all the functions and classes related to training time specific algorithm configuration.
 """
 import sys
 from abc import ABC
@@ -61,7 +61,6 @@ def get_spec_config_from_json(config_file_path: str,
         config = ConfigType()
     config.__post_init__()
     return config
-
 
 
 class SKMArgumentParser(ArgumentParser):
