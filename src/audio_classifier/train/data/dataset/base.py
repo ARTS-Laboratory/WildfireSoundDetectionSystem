@@ -10,7 +10,7 @@ DataPointType = Tuple[np.ndarray, int]
 
 class FolderDataset(Dataset):
 
-    __path_to_folder: str
+    __folder_path: str
     __sample_rate: int
     __filename_to_label_func: Callable[[str], int]
     __cache: bool
@@ -19,7 +19,7 @@ class FolderDataset(Dataset):
     __data_: Optional[List[Union[DataPointType, None]]]
 
     def __init__(self,
-                 path_to_folder: str,
+                 folder_path: str,
                  sample_rate: int,
                  filename_to_label_func: Callable[[str], int],
                  cache: bool = True) -> None:
@@ -32,11 +32,11 @@ class FolderDataset(Dataset):
             cache (bool, optional): Wheather or not to cache the loaded audio. Defaults to True.
         """
         super().__init__()
-        self.__path_to_folder = path_to_folder
+        self.__folder_path = folder_path
         self.__sample_rate = sample_rate
         self.__filename_to_label_func = filename_to_label_func
         self.__cache = cache
-        self.__filenames = os.listdir(self.__path_to_folder)
+        self.__filenames = os.listdir(self.__folder_path)
         self.__filenames = list(
             filter(lambda fn: (os.path.splitext(fn)[-1] == ".wav"),
                    self.__filenames))
@@ -76,7 +76,7 @@ class FolderDataset(Dataset):
             label (int): The class lable of the queried data point.
         """
         filename: str = self.__filenames[index]
-        path_to_audio: str = os.path.join(self.__path_to_folder, filename)
+        path_to_audio: str = os.path.join(self.__folder_path, filename)
         sound_wave, _ = rosa_core.load(path=path_to_audio,
                                        sr=self.__sample_rate,
                                        mono=True)
