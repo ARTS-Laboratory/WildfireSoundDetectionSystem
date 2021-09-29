@@ -1,6 +1,5 @@
 #%%
 from functools import partial
-from os import path
 from typing import Dict, List
 
 import audio_classifier.train.collate.base as base_collate
@@ -9,13 +8,10 @@ import audio_classifier.train.collate.preprocessing.spectrogram.transform as tra
 import audio_classifier.train.data.dataset.base as dataset_base
 import audio_classifier.train.data.metadata.query as metadata_query
 import audio_classifier.train.data.metadata.reader as metadata_reader
-import librosa.core as rosa_core
 import numpy as np
 from audio_classifier.common.preprocessing.spectrogram import reshape
-from audio_classifier.common.preprocessing.spectrogram.transform import \
-    transform_mel_spectrogram
-from audio_classifier.config.preprocessing.spec_config import MelSpecConfig
 from audio_classifier.config.preprocessing.reshape_config import ReshapeConfig
+from audio_classifier.config.preprocessing.spec_config import MelSpecConfig
 from torch.utils.data import DataLoader
 
 #%%
@@ -76,5 +72,3 @@ for filenames, batch_flat_slices, mel_freqs, mel_times, labels in loader:
             filenames, batch_flat_slices, mel_freqs, mel_times, labels):
         print(np.array_equal(gt_data[filename], curr_flat_slices),
               gt_data[filename] is not curr_flat_slices)
-
-# %%
