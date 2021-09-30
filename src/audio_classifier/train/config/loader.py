@@ -44,7 +44,7 @@ def get_loader_config_from_json(config_file_path: str) -> LoaderConfig:
     return config
 
 
-class DatasetConfigArgumentParser(ArgumentParser):
+class LoaderConfigArgumentParser(ArgumentParser):
     def __init__(self,
                  prog=None,
                  usage=None,
