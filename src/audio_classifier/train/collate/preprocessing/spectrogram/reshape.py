@@ -1,5 +1,5 @@
 from collections import deque
-from typing import Deque, Sequence, Tuple
+from typing import Deque, List, Sequence, Tuple
 
 import numpy as np
 
@@ -29,7 +29,7 @@ def slice_flatten_collate(
             slice_size=config.slice_size,
             stride_size=config.stride_size,
             copy=copy)
-        flat_slices: Sequence[np.ndarray] = [
+        flat_slices: List[np.ndarray] = [
             reshape.flatten_slice(slice=slice, copy=copy) for slice in slices
         ]
         ret_data.append(
