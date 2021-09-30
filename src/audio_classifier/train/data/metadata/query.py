@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import Dict, List
+from typing import Dict, Sequence
+
 from overrides import overrides
 
 
@@ -23,12 +24,12 @@ class MetadataQuerierBase(ABC):
 
 class DictMetaDataQuerier(MetadataQuerierBase):
 
-    __metadata: List[Dict[str, str]]
+    __metadata: Sequence[Dict[str, str]]
     __filename_key: str
     __label_key: str
     __filename_to_label_dict: Dict[str, int]
 
-    def __init__(self, metadata: List[Dict[str, str]], filename_key: str,
+    def __init__(self, metadata: Sequence[Dict[str, str]], filename_key: str,
                  label_key: str):
         super().__init__()
         self.__metadata = metadata
