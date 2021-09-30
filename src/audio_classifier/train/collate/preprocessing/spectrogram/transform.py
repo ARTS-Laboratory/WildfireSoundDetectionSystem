@@ -14,11 +14,11 @@ def stft_spectrogram_collate(
     """Transfrom a batch of data from time domain signal to frequency domain signal
 
     Args:
-        data (Sequence[Tuple[str, np.ndarray, int]]): (n_batch, ) The data from upstream sound wave dataset loader.
+        data (Sequence[Tuple[str, np.ndarray, int]]): (batch_size, ) The data from upstream sound wave dataset loader.
         config (conf_spec.MelSpecConfig): The configuration used to generate stft-spectrogram.
 
     Returns:
-        ret_data (Sequence[Tuple[str, np.ndarray, np.ndarray, np.ndarray, int]]): (n_batch, ) The transformed dataset with each data point being a tuple of (filename, stft_spec, stft_freq, stft_time, label).
+        ret_data (Sequence[Tuple[str, np.ndarray, np.ndarray, np.ndarray, int]]): (batch_size, ) The transformed dataset with each data point being a tuple of (filename, stft_spec, stft_freq, stft_time, label).
     """
     ret_data: Deque[Tuple[str, np.ndarray, np.ndarray, np.ndarray,
                           int]] = deque()
@@ -41,11 +41,11 @@ def mel_spectrogram_collate(
     """[summary]
 
     Args:
-        data (Sequence[Tuple[str, np.ndarray, int]]): (n_batch, ) The data from upstream sound wave dataset loader.
+        data (Sequence[Tuple[str, np.ndarray, int]]): (batch_size, ) The data from upstream sound wave dataset loader.
         config (conf_spec.MelSpecConfig): The configuration used to generate mel-spectrogram.
 
     Returns:
-        ret_data (Sequence[Tuple[str, np.ndarray, np.ndarray, np.ndarray, int]]): (n_batch, ) The transformed dataset with each data point being a tuple of (filename, mel_spec, mel_freq, mel_time, label).
+        ret_data (Sequence[Tuple[str, np.ndarray, np.ndarray, np.ndarray, int]]): (batch_size, ) The transformed dataset with each data point being a tuple of (filename, mel_spec, mel_freq, mel_time, label).
     """
     ret_data: Deque[Tuple[str, np.ndarray, np.ndarray, np.ndarray,
                           int]] = deque()

@@ -7,10 +7,10 @@ def identity_collate_function(
     """Transform the `data` from "batch" major to "items" major.
 
     Args:
-        data (Sequence[Tuple]): (n_batch, n_items) A list of tuple of items returned from upstream dataset.
+        data (Sequence[Tuple]): (batch_size, n_items) A list of tuple of items returned from upstream dataset.
 
     Returns:
-        ret_data (Sequence[Sequence[Any]]): (n_items, n_batch)
+        ret_data (Sequence[Sequence[Any]]): (n_items, batch_size)
     """
     n_items: int = len(data[0])
     # use deque for better append operation
@@ -46,10 +46,10 @@ class EnsembleCollateFunction():
         """Transform the data with multiple collate function in `collate_funcs` and reshape with `identity_collate_function`.
 
         Args:
-            data (Sequence[Tuple]): (n_batch, n_items) A list of tuple of items returned from upstream dataset.
+            data (Sequence[Tuple]): (batch_size, n_items) A list of tuple of items returned from upstream dataset.
 
         Returns:
-            ret_data (Sequence[Sequence[Any]]): (n_items_output, n_batch)
+            ret_data (Sequence[Sequence[Any]]): (n_items_output, batch_size)
         """
         for collate_func in self.__collate_funcs:
             data = collate_func(data)

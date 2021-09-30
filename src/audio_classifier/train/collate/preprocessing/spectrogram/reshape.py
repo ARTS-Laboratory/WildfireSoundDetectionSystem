@@ -15,11 +15,11 @@ def slice_flatten_collate(
     """For a batch of data, slice and flatten each spectrograms into a list of vectors.
 
     Args:
-        data (Sequence[Tuple[str, np.ndarray, np.ndarray, np.ndarray, int]]): (n_batch, ) The data from upstream spectrogram transformation function.
+        data (Sequence[Tuple[str, np.ndarray, np.ndarray, np.ndarray, int]]): (batch_size, ) The data from upstream spectrogram transformation function.
         config (reshape_config.ReshapeConfig): The configuration used to slice spectrogram.
 
     Returns:
-        ret_data (Sequence[Tuple[str, Sequence[np.ndarray], np.ndarray, np.ndarray, int]]): (n_batch, ) The transformed dataset with each data point being a tuple of (filename, flat_slices, sample_freq, sample_time, label).
+        ret_data (Sequence[Tuple[str, Sequence[np.ndarray], np.ndarray, np.ndarray, int]]): (batch_size, ) The transformed dataset with each data point being a tuple of (filename, flat_slices, sample_freq, sample_time, label).
     """
     ret_data: Deque[Tuple[str, Sequence[np.ndarray], np.ndarray, np.ndarray,
                           int]] = deque()
