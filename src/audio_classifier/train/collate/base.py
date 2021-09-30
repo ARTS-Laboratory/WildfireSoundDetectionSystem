@@ -1,18 +1,19 @@
-from typing import Any, Callable, List, Sequence, Tuple, Union
+from collections import deque
+from typing import Any, Callable, Deque, Sequence, Tuple, Union
 
 
 def identity_collate_function(
-        data: Union[Sequence[Tuple], Sequence]) -> List[List]:
+        data: Union[Sequence[Tuple], Sequence]) -> Sequence[Sequence]:
     """Transform the `data` from "batch" major to "items" major.
 
     Args:
         data (Sequence[Tuple]): (n_batch, n_items) A list of tuple of items returned from upstream dataset.
 
     Returns:
-        ret_data (List[List[Any]]): (n_items, n_batch)
+        ret_data (Sequence[Sequence[Any]]): (n_items, n_batch)
     """
     n_items: int = len(data[0])
-    ret_data: List[List[Any]] = [list() for _ in range(0, n_items)]
+    ret_data: Sequence[Deque[Any]] = [deque() for _ in range(0, n_items)]
     for data_point in data:
         for j, item in enumerate(data_point):
             ret_data[j].append(item)
@@ -36,14 +37,15 @@ class EnsembleCollateFunction():
         """
         self.__collate_funcs = collate_funcs
 
-    def __call__(self, data: Union[Sequence[Tuple], Sequence]) -> List[List]:
+    def __call__(self, data: Union[Sequence[Tuple],
+                                   Sequence]) -> Sequence[Sequence]:
         """Transform the data with multiple collate function in `collate_funcs` and reshape with `identity_collate_function`.
 
         Args:
             data (Sequence[Tuple]): (n_batch, n_items) A list of tuple of items returned from upstream dataset.
 
         Returns:
-            ret_data (List[List[Any]]): (n_items_output, n_batch)
+            ret_data (Sequence[Sequence[Any]]): (n_items_output, n_batch)
         """
         for collate_func in self.__collate_funcs:
             data = collate_func(data)
