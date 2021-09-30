@@ -1,5 +1,6 @@
 from collections import deque
 from typing import Any, Callable, Deque, List, Sequence, MutableSequence, Tuple, Union
+import gc
 
 
 def identity_collate_function(
@@ -13,14 +14,10 @@ def identity_collate_function(
         ret_data (Sequence[Sequence[Any]]): (n_items, batch_size)
     """
     n_items: int = len(data[0])
-    # use deque for better append operation
     ret_data: List[MutableSequence[Any]] = [deque() for _ in range(0, n_items)]
     for data_point in data:
         for j, item in enumerate(data_point):
             ret_data[j].append(item)
-    # convert deque back to list for better random access performance
-    for i, item in enumerate(ret_data):
-        ret_data[i] = list(item)
     return ret_data
 
 
