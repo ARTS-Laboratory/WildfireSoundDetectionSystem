@@ -1,10 +1,11 @@
 import csv
-from typing import Dict, List, Optional
+from collections import deque
+from typing import Dict, List, MutableSequence, Optional, Sequence
 
 
 def read_csv_metadata(
         path_to_metadata: str,
-        fieldnames: Optional[List[str]] = None) -> List[Dict[str, str]]:
+        fieldnames: Optional[List[str]] = None) -> Sequence[Dict[str, str]]:
     """Read a csv metadata
 
     Args:
@@ -16,7 +17,8 @@ def read_csv_metadata(
     """
     with open(path_to_metadata, mode="r") as csv_file:
         csv_reader = csv.DictReader(csv_file, fieldnames=fieldnames)
-        metadata: List[Dict[str, str]] = list()
+        metadata: MutableSequence[Dict[str, str]] = deque()
         for entry in csv_reader:
             metadata.append(entry)
+        metadata = list(metadata)
         return metadata
