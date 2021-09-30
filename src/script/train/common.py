@@ -1,6 +1,6 @@
 from functools import partial
 from os import path
-from typing import Callable, Dict, List, Optional, Sequence, Tuple, Union
+from typing import Callable, Dict, Optional, Sequence, Tuple, Union
 
 import audio_classifier.config.preprocessing.spec as conf_spec
 import audio_classifier.train.config.dataset as conf_dataset
@@ -8,10 +8,11 @@ import audio_classifier.train.data.dataset.base as dataset_base
 import audio_classifier.train.data.dataset.composite as dataset_composite
 import audio_classifier.train.data.metadata.query as metadata_query
 import audio_classifier.train.data.metadata.reader as metadata_reader
-from torch.utils.data import DataLoader, get_worker_info
+from torch.utils.data import DataLoader
 
 MetaDataType = Sequence[Dict[str, str]]
-CollateFuncType = Callable[[Union[List[Tuple], List]], List[List]]
+CollateFuncType = Callable[[Union[Sequence[Tuple], Sequence]],
+                           Sequence[Sequence]]
 
 
 def get_metadata(
