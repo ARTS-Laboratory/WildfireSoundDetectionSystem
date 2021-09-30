@@ -1,11 +1,12 @@
-from typing import List
+from collections import deque
+from typing import Deque, Sequence
 import numpy as np
 
 
 def slice_spectrogram(spectrogram: np.ndarray,
                       slice_size: int,
                       stride_size: int,
-                      copy: bool = False) -> List[np.ndarray]:
+                      copy: bool = False) -> Sequence[np.ndarray]:
     """Slice a spectrogram.
 
     Args:
@@ -15,9 +16,9 @@ def slice_spectrogram(spectrogram: np.ndarray,
         copy (bool): if `True`, then the returned slices has no relation with the passed in spectrogram. Defaults to `False`.
 
     Returns:
-        slices (np.ndarray): (n_slices, n_sample_freq, slice_size) Sliced spectrogram for the given raw_spectrogram.
+        slices Sequence[np.ndarray]: (n_slices, n_sample_freq, slice_size) Sliced spectrogram for the given raw_spectrogram.
     """
-    slices: List[np.ndarray] = list()
+    slices: Deque[np.ndarray] = deque()
     for i in range(0, spectrogram.shape[1] - slice_size + 1, stride_size):
         curr_slice: np.ndarray = spectrogram[:, i:i + slice_size]
         if copy == True:
