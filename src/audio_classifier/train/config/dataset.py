@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from typing import Type, TypeVar
 
 from dataclasses_json import dataclass_json
+from overrides import overrides
 
 
 @dataclass_json
@@ -14,7 +15,10 @@ from dataclasses_json import dataclass_json
            unsafe_hash=False,
            frozen=False)
 class DatasetConfigBase(ABC):
-    def __post_init__(self, argv: Namespace):
+    def __post_init__(self):
+        pass
+
+    def _post_process(self, argv: Namespace):
         pass
 
 
@@ -25,7 +29,7 @@ class DatasetConfigBase(ABC):
            order=False,
            unsafe_hash=False,
            frozen=False)
-class PreSplitFoldDatasetConfig(ABC):
+class PreSplitFoldDatasetConfig(DatasetConfigBase):
 
     fold_path_stub: str = field()
     k_folds: int = field()
@@ -34,7 +38,8 @@ class PreSplitFoldDatasetConfig(ABC):
     root_path: str = field(default="")
     metadata_path: str = field(default="")
 
-    def __post_init__(self, argv: Namespace):
+    @overrides
+    def _post_process(self, argv: Namespace):
         if self.root_path == "":
             self.root_path = argv.dataset_root_path
         if self.metadata_path == "":
@@ -65,7 +70,7 @@ def get_dataset_config_from_json(
             config = ConfigType.from_json(config_file.read())
     except Exception as e:
         raise e
-    config.__post_init__(argv)
+    config._post_process(argv)
     return config
 
 
