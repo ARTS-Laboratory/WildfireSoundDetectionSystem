@@ -81,11 +81,11 @@ def generate_dataset(
                             collate_fn=collate_function,
                             num_workers=loader_config.num_workers,
                             batch_size=loader_config.batch_size)
-        batches: Deque[Sequence[Sequence]] = deque()
+        batches_tmp: Deque[Sequence[Sequence]] = deque()
         for batch in loader:
-            batches.append(batch)
+            batches_tmp.append(batch)
         curr_ret_dataset: Sequence[
-            Sequence[Any]] = batch_utils.combine_batches(batches)
+            Sequence[Any]] = batch_utils.combine_batches(batches_tmp)
         ret_dataset.append(curr_ret_dataset)
     return ret_dataset
 
