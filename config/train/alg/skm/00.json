@@ -1,0 +1,6 @@
+{
+    "n_components": 0.85,
+    "normalize": true,
+    "standardize": true,
+    "whiten": true
+}
