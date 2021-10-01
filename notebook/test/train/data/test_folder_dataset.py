@@ -1,8 +1,10 @@
 #%%
+from collections import deque
 from os import path
-from typing import Any, Dict, List
+from typing import Any, Deque, Dict, List, Sequence
 
 import audio_classifier.train.data.dataset.base as dataset_base
+from audio_classifier.train.data.dataset.utils.batch import combine_batches
 import audio_classifier.train.data.metadata.query as metadata_query
 import audio_classifier.train.data.metadata.reader as metadata_reader
 import librosa.core as rosa_core
@@ -15,7 +17,7 @@ PATH_TO_METADATA: str = "../../test_dataset/metadata.csv"
 PATH_TO_FOLDER_DATASET: str = "../../test_dataset/folder_dataset"
 
 #%%
-metadata: List[Dict[str, str]] = metadata_reader.read_csv_metadata(
+metadata: Sequence[Dict[str, str]] = metadata_reader.read_csv_metadata(
     path_to_metadata=PATH_TO_METADATA)
 
 #%%
@@ -69,4 +71,10 @@ loader = DataLoader(dataset=dataset,
 for filename, sound_wave, label in loader:
     print(str.format("{} {} {}", type(filename), type(sound_wave),
                      type(label)))
+#%%
+batches: Deque[Sequence[Sequence[Any]]] = deque()
+for curr_batch in loader:
+    batches.append(curr_batch)
+combined = combine_batches(batches_tmp=batches)
+
 # %%

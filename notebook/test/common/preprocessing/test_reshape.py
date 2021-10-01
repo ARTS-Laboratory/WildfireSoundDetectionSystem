@@ -1,5 +1,5 @@
 #%%
-from typing import List
+from typing import List, Sequence
 import librosa.core as rosa_core
 import numpy as np
 from audio_classifier.common.preprocessing.spectrogram import (reshape,
@@ -48,7 +48,7 @@ def verify_slice(slice: np.ndarray, flat_slice: np.ndarray) -> bool:
 spec_time_res: float = mel_sample_time[1] - mel_sample_time[0]
 SLICE_SIZE: int = int(0.1 / spec_time_res)
 STRIDE_SIZE: int = int(0.1 / spec_time_res)
-mel_spec_slices: List[np.ndarray] = reshape.slice_spectrogram(
+mel_spec_slices: Sequence[np.ndarray] = reshape.slice_spectrogram(
     spectrogram=mel_spec, slice_size=SLICE_SIZE, stride_size=STRIDE_SIZE)
 
 #%% [markdown]

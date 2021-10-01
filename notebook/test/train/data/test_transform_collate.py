@@ -1,7 +1,7 @@
 #%%
 from functools import partial
 from os import path
-from typing import Dict, List
+from typing import Dict, List, Sequence
 
 import audio_classifier.train.collate.base as base_collate
 import audio_classifier.train.collate.preprocessing.spectrogram.transform as transform_collate
@@ -20,7 +20,7 @@ PATH_TO_METADATA: str = "../../test_dataset/metadata.csv"
 PATH_TO_FOLDER_DATASET: str = "../../test_dataset/folder_dataset"
 
 #%%
-metadata: List[Dict[str, str]] = metadata_reader.read_csv_metadata(
+metadata: Sequence[Dict[str, str]] = metadata_reader.read_csv_metadata(
     path_to_metadata=PATH_TO_METADATA)
 
 #%%
