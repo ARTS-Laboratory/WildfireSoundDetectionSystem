@@ -98,7 +98,7 @@ def _sub_dataset_generator(
     """The functor used to generate each sub dataset.
 
     Args:
-        curr_fold (int): The current fold to be generated
+        curr_fold (int): The current fold to be generated. Zero-indexed.
         dataset_config (conf_dataset.PreSplitFoldDatasetConfig): The dataset configuration to be used.
         spec_config (conf_spec.STFTSpecConfig): The spectrogram configuration to be used.
         metadata (Optional[MetaDataType], optional): The metadata used to map filename to class lable. If not provided, one will be loaded. Defaults to None.
