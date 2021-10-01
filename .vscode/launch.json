@@ -1,0 +1,39 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "fit_skm",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/script/train/feature_engineering/skm/fit_skm.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--dataset_root_path",
+                "${workspaceFolder}/data/BinaryFireSound/dataset/audio_44khz/audio",
+                "--metadata_path",
+                "${workspaceFolder}/data/BinaryFireSound/dataset/audio_44khz/metadata/metadata.csv",
+                "--dataset_config_path",
+                "${workspaceFolder}/config/train/dataset/pre_split_dataset.json",
+                "--spec_config_path",
+                "${workspaceFolder}/config/preprocessing/spec/00.json",
+                "--reshape_config_path",
+                "${workspaceFolder}/config/preprocessing/reshape/00.json",
+                "--skm_config_path",
+                "${workspaceFolder}/config/train/alg/skm/00.json",
+                "--loader_config_path",
+                "${workspaceFolder}/config/train/loader/t480s.json"
+            ]
+        }
+    ]
+}
