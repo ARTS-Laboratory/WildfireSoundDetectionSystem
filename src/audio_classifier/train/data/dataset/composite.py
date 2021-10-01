@@ -19,7 +19,7 @@ class KFoldDatasetGenerator:
             sub_dataset_generator (Callable[[int], Dataset]): The function that takes in the val_fold number and returns the corresponding `Dataset`.
         """
         self.__k_folds = k_folds
-
+        self.__all_fold_datasets = list()
         for k in range(self.__k_folds):
             dataset: Dataset = sub_dataset_generator(k)
             self.__all_fold_datasets.append(dataset)
@@ -45,7 +45,7 @@ class KFoldDatasetGenerator:
                 str.format("curr_val_fols {} is bigger than self.__k_folds {}",
                            curr_val_fold, self.__k_folds))
         train_dataset_list = [
-            dataset for i, dataset in self.__all_fold_datasets
+            dataset for i, dataset in enumerate(self.__all_fold_datasets)
             if i != curr_val_fold
         ]
         train_dataset: Dataset = ConcatDataset(train_dataset_list)
