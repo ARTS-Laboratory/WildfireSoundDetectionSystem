@@ -1,5 +1,5 @@
 from abc import ABC
-from argparse import ArgumentParser, HelpFormatter
+from argparse import ArgumentParser, HelpFormatter, Namespace
 from dataclasses import dataclass, field
 from typing import Type, TypeVar
 
@@ -14,7 +14,7 @@ from dataclasses_json import dataclass_json
            unsafe_hash=False,
            frozen=False)
 class DatasetConfigBase(ABC):
-    def __post_init__(self):
+    def __post_init__(self, argv: Namespace):
         pass
 
 
@@ -27,15 +27,18 @@ class DatasetConfigBase(ABC):
            frozen=False)
 class PreSplitFoldDatasetConfig(ABC):
 
-    root_path: str = field()
-    metadata_path: str = field()
     fold_path_stub: str = field()
     k_folds: int = field()
     filename_key: str = field()
     label_key: str = field()
+    root_path: str = field(default="")
+    metadata_path: str = field(default="")
 
-    def __post_init__(self):
-        pass
+    def __post_init__(self, argv: Namespace):
+        if self.root_path == "":
+            self.root_path = argv.dataset_root_path
+        if self.metadata_path == "":
+            self.metadata_path = argv.metadata_path
 
 
 DatasetConfigType = TypeVar("DatasetConfigType", DatasetConfigBase,
@@ -43,7 +46,7 @@ DatasetConfigType = TypeVar("DatasetConfigType", DatasetConfigBase,
 
 
 def get_dataset_config_from_json(
-        config_file_path: str,
+        config_file_path: str, argv: Namespace,
         ConfigType: Type[DatasetConfigType]) -> "ConfigType":
     """Get SpectrogramConfig from a json file.
 
@@ -62,7 +65,7 @@ def get_dataset_config_from_json(
             config = ConfigType.from_json(config_file.read())
     except Exception as e:
         raise e
-    config.__post_init__()
+    config.__post_init__(argv)
     return config
 
 
@@ -92,6 +95,14 @@ class DatasetConfigArgumentParser(ArgumentParser):
                          conflict_handler=conflict_handler,
                          add_help=add_help,
                          allow_abbrev=allow_abbrev)
+        self.add_argument("--dataset_root_path",
+                          type=str,
+                          required=True,
+                          help="path to the dataset configuration")
+        self.add_argument("--metadata_path",
+                          type=str,
+                          required=True,
+                          help="path to the metadata")
         self.add_argument("--dataset_config_path",
                           type=str,
                           required=True,

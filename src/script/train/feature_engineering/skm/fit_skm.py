@@ -1,26 +1,15 @@
-from collections import deque
-import sys
 from argparse import ArgumentParser, Namespace
 from dataclasses import dataclass, field
-from functools import partial
-from os import path
-from typing import Deque, Dict, List, Optional, Sequence, Tuple, TypeVar
+from typing import List, Sequence, Tuple
 
 import audio_classifier.config.preprocessing.reshape as conf_reshape
 import audio_classifier.config.preprocessing.spec as conf_spec
-import audio_classifier.train.collate.base as collate_base
-import audio_classifier.train.collate.preprocessing.spectrogram.reshape as collate_reshape
-import audio_classifier.train.collate.preprocessing.spectrogram.transform as collate_transform
 import audio_classifier.train.config.alg as conf_alg
 import audio_classifier.train.config.dataset as conf_dataset
 import audio_classifier.train.config.loader as conf_loader
-import audio_classifier.train.data.dataset.base as dataset_base
 import audio_classifier.train.data.dataset.composite as dataset_composite
-import audio_classifier.train.data.metadata.query as metadata_query
-import audio_classifier.train.data.metadata.reader as metadata_reader
 import numpy as np
 import script.train.common as script_common
-from sklearn_plugins.cluster.spherical_kmeans import SphericalKMeans
 
 MetaDataType = script_common.MetaDataType
 CollateFuncType = script_common.CollateFuncType
@@ -59,7 +48,7 @@ def get_config(argv: Namespace):
     SKM_CONFIG_PATH: str = argv.skm_config_path
     LOADER_CONFIG_PATH: str = argv.loader_config_path
     dataset_config: conf_dataset.PreSplitFoldDatasetConfig = conf_dataset.get_dataset_config_from_json(
-        DATASET_CONFIG_PATH, conf_dataset.PreSplitFoldDatasetConfig)
+        DATASET_CONFIG_PATH, argv, conf_dataset.PreSplitFoldDatasetConfig)
     mel_spec_config: conf_spec.MelSpecConfig = conf_spec.get_spec_config_from_json(
         SPEC_CONFIG_PATH, conf_spec.MelSpecConfig)
     reshape_config: conf_reshape.ReshapeConfig = conf_reshape.get_reshape_config_from_json(
