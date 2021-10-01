@@ -16,7 +16,7 @@ from dataclasses_json import dataclass_json
 class LoaderConfig():
 
     num_workers: int = field(default=0)
-    batch_size: Optional[int] = field(default=None)
+    batch_size: int = field(default=1)
 
     def __post_init__(self):
         pass
