@@ -19,8 +19,8 @@ class ReshapeConfig:
     """FeatureVectorConfig class
 
     Attributes:
-        slice_size (int): Defaults to 130
-        stride_size (int): Defaults to 100
+        slice_size (int): Defaults to 5
+        stride_size (int): Defaults to 5
     """
     slice_size: int = dataclasses.field(default=5)
     stride_size: int = dataclasses.field(default=5)
