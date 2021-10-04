@@ -1,11 +1,15 @@
-from argparse import Namespace
 import sys
+from argparse import Namespace
 from functools import partial
-from typing import List
+from os import path
+from typing import List, Union
+
+from sklearn_plugins.cluster.spherical_kmeans import SphericalKMeans
 
 import audio_classifier.train.collate.base as collate_base
 import audio_classifier.train.collate.preprocessing.spectrogram.reshape as collate_reshape
 import audio_classifier.train.collate.preprocessing.spectrogram.transform as collate_transform
+import numpy as np
 import script.train.common as script_common
 from audio_classifier.train.data.dataset.composite import KFoldDatasetGenerator
 from script.train.feature_engineering.skm import fit_skm
@@ -16,6 +20,10 @@ CollateFuncType = script_common.CollateFuncType
 
 def main(args: List[str]):
     argv: Namespace = fit_skm.parse_args(args)
+    export_path: str = argv.export_path
+    k_min: int = argv.k_min
+    k_max: int = argv.k_max
+    k_step: int = argv.k_step
     dataset_config, mel_spec_config, reshape_config, skm_config, loader_config = fit_skm.get_config(
         argv=argv)
     metadata: MetaDataType = script_common.get_metadata(dataset_config)
@@ -31,19 +39,35 @@ def main(args: List[str]):
                     config=reshape_config)
         ])
     for curr_val_fold in range(dataset_config.k_folds):
-        train, val = fit_skm.generate_slice_dataset(
+        train, _ = fit_skm.generate_slice_dataset(
             curr_val_fold=curr_val_fold,
             dataset_generator=dataset_generator,
             collate_function=collate_func,
             loader_config=loader_config)
-        print(
-            str.format("{} {} {} {} {}", len(train.filenames),
-                       len(train.flat_slices), len(train.sample_freqs),
-                       len(train.sample_times), len(train.labels)))
-        print(
-            str.format("{} {} {} {} {}", len(val.filenames),
-                       len(val.flat_slices), len(val.sample_freqs),
-                       len(val.sample_times), len(val.labels)))
+        slices, labels = fit_skm.convert_to_ndarray(slice_dataset=train)
+        unique_labels: np.ndarray = np.unique(labels)
+        for curr_label in unique_labels:
+            curr_class_path: str = fit_skm.get_curr_class_path(
+                export_path, curr_val_fold, curr_label)
+            curr_slices: np.ndarray = fit_skm.get_curr_class_slices(
+                curr_label, slices, labels)
+            k_value: Union[int, None] = fit_skm.try_k_elbow(
+                curr_class_path=curr_class_path,
+                slices=curr_slices,
+                skm_config=skm_config,
+                k_range=range(k_min, k_max, k_step))
+            if k_value is None:
+                continue
+            skm: SphericalKMeans = fit_skm.fit_skm(
+                curr_class_path=curr_class_path,
+                slices=curr_slices,
+                skm_config=skm_config,
+                k_value=k_value)
+            fit_skm.plot_silhouette(curr_class_path=curr_class_path,
+                                    slices=curr_slices,
+                                    skm=skm,
+                                    k_value=k_value)
+
 
 if __name__ == "__main__":
     args: List[str] = sys.argv[1:]
