@@ -228,6 +228,16 @@ def fit_skm(curr_class_path: str,
 
 def verify_model(slices: np.ndarray, skm: SphericalKMeans,
                  model_path: str) -> bool:
+    """Verify the model
+
+    Args:
+        slices (np.ndarray): The slices used to verify.
+        skm (SphericalKMeans): The original skm.
+        model_path (str): Path to load the exported skm.
+
+    Returns:
+        is_pass (bool): Whether a model passed the consistency test or not.
+    """
     with open(model_path, "rb") as file:
         skm_prime: SphericalKMeans = pickle.load(file)
     res: np.ndarray = skm.predict(slices)
