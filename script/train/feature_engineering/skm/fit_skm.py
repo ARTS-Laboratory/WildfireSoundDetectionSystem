@@ -3,8 +3,6 @@ from argparse import Namespace
 from functools import partial
 from typing import List, Union
 
-from sklearn_plugins.cluster.spherical_kmeans import SphericalKMeans
-
 import audio_classifier.train.collate.base as collate_base
 import audio_classifier.train.collate.preprocessing.spectrogram.reshape as collate_reshape
 import audio_classifier.train.collate.preprocessing.spectrogram.transform as collate_transform
