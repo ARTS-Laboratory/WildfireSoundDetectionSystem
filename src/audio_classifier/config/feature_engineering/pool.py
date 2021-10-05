@@ -18,11 +18,11 @@ class PoolConfig:
     """PoolConfig class
 
     Attributes:
-        pool_size (int): Defaults to 5.
-        stride_size (int): Defaults to 5.
+        pool_size (int): The size of the sliding window. Defaults to -1 set the pool_size to len(projections).
+        stride_size (int): The stride of the sliding window. Defaults to -1 set the stride_size to pool_size.
     """
-    pool_size: int = field(default=5)
-    stride_size: int = field(default=5)
+    pool_size: int = field(default=-1)
+    stride_size: int = field(default=-1)
 
 
 def get_pool_config_from_json(config_file_path: str) -> PoolConfig:
