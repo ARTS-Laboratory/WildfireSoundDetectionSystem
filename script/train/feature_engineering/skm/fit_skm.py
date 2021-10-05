@@ -1,7 +1,6 @@
 import sys
 from argparse import Namespace
 from functools import partial
-from os import path
 from typing import List, Union
 
 from sklearn_plugins.cluster.spherical_kmeans import SphericalKMeans
