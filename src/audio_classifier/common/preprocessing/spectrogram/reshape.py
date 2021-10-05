@@ -18,14 +18,14 @@ def slice_spectrogram(spectrogram: np.ndarray,
     Returns:
         slices Sequence[np.ndarray]: (n_slices, n_sample_freq, slice_size) Sliced spectrogram for the given raw_spectrogram.
     """
-    slices: Deque[np.ndarray] = deque()
+    spec_slices: Deque[np.ndarray] = deque()
     for i in range(0, spectrogram.shape[1] - slice_size + 1, stride_size):
         curr_slice: np.ndarray = spectrogram[:, i:i + slice_size]
         if copy == True:
-            slices.append(np.copy(curr_slice))
+            spec_slices.append(np.copy(curr_slice))
         else:
-            slices.append(curr_slice)
-    return slices
+            spec_slices.append(curr_slice)
+    return spec_slices
 
 
 def flatten_slice(slice: np.ndarray, copy: bool = False) -> np.ndarray:
