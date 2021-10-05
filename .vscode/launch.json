@@ -32,7 +32,15 @@
                 "--skm_config_path",
                 "${workspaceFolder}/config/train/alg/skm/00.json",
                 "--loader_config_path",
-                "${workspaceFolder}/config/train/loader/t480s.json"
+                "${workspaceFolder}/config/train/loader/t480s.json",
+                "--export_path",
+                "${workspaceFolder}/model/skm/spec_00_reshape_00_skm_00",
+                "--k_min",
+                "5",
+                "--k_max",
+                "100",
+                "--k_step",
+                "5"
             ]
         }
     ]

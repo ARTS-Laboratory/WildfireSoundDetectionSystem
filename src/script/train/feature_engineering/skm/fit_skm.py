@@ -126,8 +126,8 @@ def convert_to_ndarray(
 
 def get_curr_class_slices(curr_class: int, slices: np.ndarray,
                           labels: np.ndarray) -> np.ndarray:
-    curr_indices: np.ndarray = np.argwhere(labels == curr_class)
-    curr_slices: np.ndarray = slices[curr_indices]
+    curr_indices: np.ndarray = np.argwhere(labels == curr_class).flatten()
+    curr_slices: np.ndarray = slices[curr_indices, :]
     return curr_slices
 
 
@@ -146,7 +146,7 @@ def get_curr_class_path(export_path: str, curr_val_fold: int,
     curr_class_path: str = path.join(export_path,
                                      str.format("val_{:02d}", curr_val_fold),
                                      str.format("class_{:02d}", curr_class))
-    os.makedirs(curr_class_path)
+    os.makedirs(curr_class_path, exist_ok=True)
     return curr_class_path
 
 
