@@ -87,11 +87,13 @@ def generate_slice_dataset(
     dataset_generator: dataset_composite.KFoldDatasetGenerator,
     collate_function: CollateFuncType, loader_config: conf_loader.LoaderConfig
 ) -> Tuple[SliceDataset, SliceDataset]:
+    np.seterr(divide="ignore")
     ret_raw_dataset = script_common.generate_dataset(
         curr_val_fold=curr_val_fold,
         dataset_generator=dataset_generator,
         collate_function=collate_function,
         loader_config=loader_config)
+    np.seterr(divide="warn")
     ret_dataset: Sequence[SliceDataset] = list()
     for raw_dataset in ret_raw_dataset:
         filenames, all_files_flat_slices, sample_freqs, sample_times, labels = raw_dataset
@@ -216,7 +218,7 @@ def fit_skm(curr_class_path: str,
             slices: np.ndarray,
             skm_config: conf_alg.SKMConfig,
             k_value: int,
-            filename: str = "model.pkl") -> SphericalKMeans:
+            filename: str = "model.pkl") -> Tuple[SphericalKMeans, str]:
     """Train and serialize SphericalKMeans.
 
     Args:
@@ -226,9 +228,10 @@ def fit_skm(curr_class_path: str,
         k_value (int): the k value used to train SphericalKMeans.
 
     Returns:
-        SphericalKMeans: [description]
+        skm (SphericalKMeans): The fitted skm model.
+        file_path (str): The path to exported model.
     """
-    file_path: str = path.join(curr_class_path, filename)
+    model_path: str = path.join(curr_class_path, filename)
     skm = SphericalKMeans(n_clusters=k_value,
                           n_components=skm_config.n_components,
                           normalize=skm_config.normalize,
@@ -237,9 +240,19 @@ def fit_skm(curr_class_path: str,
                           copy=True,
                           max_iter=10000)
     skm.fit(slices)
-    with open(file_path, "wb") as file:
+    with open(model_path, "wb") as file:
         pickle.dump(skm, file)
-    return skm
+    return skm, model_path
+
+
+def verify_model(slices: np.ndarray, skm: SphericalKMeans,
+                 model_path: str) -> bool:
+    with open(model_path, "rb") as file:
+        skm_prime: SphericalKMeans = pickle.load(file)
+    res: np.ndarray = skm.predict(slices)
+    res_prime: np.ndarray = skm_prime.predict(slices)
+    is_pass: bool = np.array_equal(res, res_prime)
+    return is_pass
 
 
 def plot_silhouette(curr_class_path: str,

@@ -57,11 +57,17 @@ def main(args: List[str]):
                 k_range=range(k_min, k_max, k_step))
             if k_value is None:
                 continue
-            skm: SphericalKMeans = fit_skm.fit_skm(
-                curr_class_path=curr_class_path,
-                slices=curr_slices,
-                skm_config=skm_config,
-                k_value=k_value)
+            skm, model_path = fit_skm.fit_skm(curr_class_path=curr_class_path,
+                                              slices=curr_slices,
+                                              skm_config=skm_config,
+                                              k_value=k_value)
+            is_pass: bool = fit_skm.verify_model(slices=slices,
+                                                 skm=skm,
+                                                 model_path=model_path)
+            if is_pass == False:
+                print("Discrepency between src model and exported model",
+                      file=sys.stderr)
+                sys.exit(1)
             fit_skm.plot_silhouette(curr_class_path=curr_class_path,
                                     slices=curr_slices,
                                     skm=skm,
