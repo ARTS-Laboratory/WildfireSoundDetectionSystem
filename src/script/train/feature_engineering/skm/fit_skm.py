@@ -1,4 +1,3 @@
-import csv
 import os
 import pickle
 import traceback
@@ -194,24 +193,6 @@ def try_k_elbow(curr_class_path: str,
     figure.savefig(fname=fig_filename, dpi=300)
     plt.close(fig=figure)
     return visualizer.elbow_value_
-
-
-# def log_history_csv(hist: np.ndarray,
-#                     log_path: str,
-#                     filename: str = "history.csv") -> None:
-#     """Log history matrix to csv file with the last 2 row being the mean and median across all folds.
-
-#     Args:
-#         hist (np.ndarray): (n_folds, n_class) the optimal k identified.
-#         log_path (str): the path to log the file
-#         filename (str, optional): the filename of the csv file. Defaults to "history.csv".
-#     """
-#     with open(path.join(log_path, filename), mode="w") as hist_file:
-#         hist_writer = csv.writer(hist_file)
-#         hist_writer.writerows(hist)
-#         hist_writer.writerow(np.nanmean(a=hist, axis=0))
-#         hist_writer.writerow(np.nanstd(a=hist[0:-1, :], axis=0))
-#         hist_writer.writerow(np.nanmedian(a=hist[0:-2, :], axis=0))
 
 
 def fit_skm(curr_class_path: str,
