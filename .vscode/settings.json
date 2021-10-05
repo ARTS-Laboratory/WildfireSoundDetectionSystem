@@ -75,5 +75,6 @@
         "**/.pyre/": true,
         "**/.pytype/": true,
         "**/cython_debug/": true,
-    }
+    },
+    "python.formatting.provider": "yapf"
 }
