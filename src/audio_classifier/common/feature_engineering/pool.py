@@ -9,7 +9,7 @@ class PoolFunc:
 
     def __init__(self, pool_funcs: Sequence[Callable[[np.ndarray],
                                                      np.ndarray]]):
-        """[summary]
+        """Constructor for pooling function that chains multiple pooling function.
 
         Args:
             pool_funcs (Sequence[Callable[[np.ndarray], np.ndarray]]): Each pooling function takes an np.ndarray of shape (n_slices, n_features) and output and np.ndarray of shape (n_output_features, )
@@ -17,7 +17,7 @@ class PoolFunc:
         self.__pool_funcs = pool_funcs
 
     def __call__(self, input: np.ndarray) -> np.ndarray:
-        """[summary]
+        """Iterate and apply all the pooling functions and generate an output vector.
 
         Args:
             input (np.ndarray): (n_slices, n_features)
