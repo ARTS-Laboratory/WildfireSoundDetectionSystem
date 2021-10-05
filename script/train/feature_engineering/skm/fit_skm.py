@@ -66,6 +66,13 @@ def main(args: List[str]):
                 print("Discrepency between src model and exported model",
                       file=sys.stderr)
                 sys.exit(1)
+            fit_skm.plot_centroids(curr_class_path=curr_class_path,
+                                   skm=skm,
+                                   spec_config=mel_spec_config,
+                                   reshape_config=reshape_config,
+                                   skm_config=skm_config,
+                                   sample_freq=train.sample_freqs[0],
+                                   sample_time=train.sample_times[0])
             fit_skm.plot_silhouette(curr_class_path=curr_class_path,
                                     slices=curr_slices,
                                     skm=skm,

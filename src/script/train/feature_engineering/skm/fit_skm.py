@@ -246,7 +246,7 @@ def verify_model(slices: np.ndarray, skm: SphericalKMeans,
     return is_pass
 
 
-def plot_centroids(curr_model_path: str,
+def plot_centroids(curr_class_path: str,
                    skm: SphericalKMeans,
                    spec_config: conf_spec.MelSpecConfig,
                    reshape_config: conf_reshape.ReshapeConfig,
@@ -283,7 +283,7 @@ def plot_centroids(curr_model_path: str,
                          order='F')
     sample_freq = sample_freq
     sample_time = sample_time[0:slice_size]
-    curr_plot_root_path: str = path.join(curr_model_path, "centroids")
+    curr_plot_root_path: str = path.join(curr_class_path, "centroids")
     spec_plot_path: str = path.join(curr_plot_root_path, "spec")
     raw_plot_path: str = path.join(curr_plot_root_path, "raw")
     os.makedirs(spec_plot_path, exist_ok=True)
