@@ -33,6 +33,7 @@ class PreSplitFoldDatasetConfig(DatasetConfigBase):
 
     fold_path_stub: str = field()
     k_folds: int = field()
+    n_classes: int = field()
     filename_key: str = field()
     label_key: str = field()
     root_path: str = field(default="")

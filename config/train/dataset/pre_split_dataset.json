@@ -1,6 +1,7 @@
 {
     "fold_path_stub": "fold{}",
     "k_folds": 10,
+    "n_classes": 2,
     "filename_key": "slice_file_name",
     "label_key": "classID"
 }
