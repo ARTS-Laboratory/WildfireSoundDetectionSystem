@@ -19,7 +19,7 @@ def slice_flatten_collate(
         config (reshape_config.ReshapeConfig): The configuration used to slice spectrogram.
 
     Returns:
-        ret_data (Sequence[Tuple[str, Sequence[np.ndarray], np.ndarray, np.ndarray, int]]): (batch_size, ) The transformed dataset with each data point being a tuple of (filename, flat_slices, sample_freq, sample_time, label).
+        ret_data (Sequence[Tuple[str, Sequence[np.ndarray], np.ndarray, np.ndarray, int]]): (batch_size, ) The transformed dataset with each data point being a tuple of (filename, spec_flat_slices, sample_freq, sample_time, label).
     """
     ret_data: Deque[Tuple[str, Sequence[np.ndarray], np.ndarray, np.ndarray,
                           int]] = deque()
@@ -29,9 +29,9 @@ def slice_flatten_collate(
             slice_size=config.slice_size,
             stride_size=config.stride_size,
             copy=copy)
-        flat_slices: List[np.ndarray] = [
+        spec_flat_slices: List[np.ndarray] = [
             reshape.flatten_slice(slice=slice, copy=copy) for slice in slices
         ]
         ret_data.append(
-            (filename, flat_slices, sample_freq, sample_time, label))
+            (filename, spec_flat_slices, sample_freq, sample_time, label))
     return ret_data
