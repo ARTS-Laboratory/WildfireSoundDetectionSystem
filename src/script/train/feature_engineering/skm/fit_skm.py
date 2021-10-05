@@ -246,6 +246,67 @@ def verify_model(slices: np.ndarray, skm: SphericalKMeans,
     return is_pass
 
 
+def plot_centroids(curr_model_path: str,
+                   skm: SphericalKMeans,
+                   spec_config: conf_spec.MelSpecConfig,
+                   reshape_config: conf_reshape.ReshapeConfig,
+                   skm_config: conf_alg.SKMConfig,
+                   sample_freq: np.ndarray,
+                   sample_time: np.ndarray,
+                   filename_stub: str = "k_{:02d}.png"):
+    """Plot the centroids found by SphericalKMeans
+
+    Args:
+        curr_plot_root_path (str): the path to the directory where all the plot are saved
+        skm (SphericalKMeans): A trained SphericalKMeans instance
+        spec_config (MelSpectrogramConfig): spectrogram configuration
+        feature_vector_config (FeatureVectorConfig): feature vector configuration instance.
+        loader (RawUrbanSound8KLoader): loader instance used to load the dataset.
+        filename_stub (str, optional): The filename stub for the plots. Defaults to "k_{:02d}.png".
+    """
+    centers: np.ndarray
+    if skm.cluster_centers_ is not None:
+        centers = skm.cluster_centers_
+    else:
+        return
+    # recover to original spectrogram space
+    centers = skm.pca_.inverse_transform(centers)
+    if skm_config.standardize and (skm.std_scalar_ is not None):
+        centers = skm.std_scalar_.inverse_transform(centers, copy=False)
+    n_centers: int = len(centers)
+    slice_size: int = reshape_config.slice_size
+    n_mels: int = spec_config.n_mels
+    centers = np.reshape(a=centers,
+                         newshape=(n_centers, n_mels, slice_size),
+                         order='F')
+    sample_freq = sample_freq
+    sample_time = sample_time[0:slice_size]
+    curr_plot_root_path: str = path.join(curr_model_path, "centroids")
+    spec_plot_path: str = path.join(curr_plot_root_path, "spec")
+    raw_plot_path: str = path.join(curr_plot_root_path, "raw")
+    os.makedirs(spec_plot_path, exist_ok=True)
+    os.makedirs(raw_plot_path, exist_ok=True)
+    for i, center in enumerate(centers):
+        if spec_config.apply_log == False:
+            center = 10 * np.log10(center)
+        fig_filename: str = str.format(filename_stub, i)
+        fig_filename = path.join(spec_plot_path, fig_filename)
+        plt.pcolormesh(sample_time,
+                       sample_freq,
+                       center,
+                       shading="auto",
+                       cmap="magma")
+        plt.gca().set_aspect(1e-5)
+        plt.savefig(fname=fig_filename, dpi=300)
+        plt.close()
+        fig_filename = str.format(filename_stub, i)
+        fig_filename = path.join(raw_plot_path, fig_filename)
+        plt.pcolormesh(center, shading="auto", cmap="gray")
+        plt.gca().set_aspect(2.0)
+        plt.savefig(fname=fig_filename, dpi=300)
+        plt.close()
+
+
 def plot_silhouette(curr_class_path: str,
                     slices: np.ndarray,
                     skm: SphericalKMeans,
