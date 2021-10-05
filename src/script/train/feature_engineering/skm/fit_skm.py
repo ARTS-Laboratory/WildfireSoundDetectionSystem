@@ -213,10 +213,10 @@ def try_k_elbow(curr_class_path: str,
 
 
 def fit_skm(curr_class_path: str,
-                           slices: np.ndarray,
-                           skm_config: conf_alg.SKMConfig,
-                           k_value: int,
-                           filename: str = "model.pkl") -> SphericalKMeans:
+            slices: np.ndarray,
+            skm_config: conf_alg.SKMConfig,
+            k_value: int,
+            filename: str = "model.pkl") -> SphericalKMeans:
     """Train and serialize SphericalKMeans.
 
     Args:
