@@ -254,14 +254,16 @@ def plot_centroids(curr_model_path: str,
                    sample_freq: np.ndarray,
                    sample_time: np.ndarray,
                    filename_stub: str = "k_{:02d}.png"):
-    """Plot the centroids found by SphericalKMeans
+    """Plot centorids
 
     Args:
-        curr_plot_root_path (str): the path to the directory where all the plot are saved
+        curr_model_path (str): the path to the directory where all the plot are saved
         skm (SphericalKMeans): A trained SphericalKMeans instance
-        spec_config (MelSpectrogramConfig): spectrogram configuration
-        feature_vector_config (FeatureVectorConfig): feature vector configuration instance.
-        loader (RawUrbanSound8KLoader): loader instance used to load the dataset.
+        spec_config (conf_spec.MelSpecConfig): spectrogram configuration
+        reshape_config (conf_reshape.ReshapeConfig): reshape configuration
+        skm_config (conf_alg.SKMConfig): spherical k means configuration
+        sample_freq (np.ndarray): A sample freq of mel spectrogram.
+        sample_time (np.ndarray): A sample time.
         filename_stub (str, optional): The filename stub for the plots. Defaults to "k_{:02d}.png".
     """
     centers: np.ndarray
