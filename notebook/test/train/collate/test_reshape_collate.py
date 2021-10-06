@@ -48,7 +48,7 @@ gt_data: Dict[str, List[np.ndarray]] = dict()
 for filenames, mel_specs, mel_freqs, mel_times, labels in loader:
     for filename, mel_spec, mel_freq, mel_time, label in zip(
             filenames, mel_specs, mel_freqs, mel_times, labels):
-        slices: List[np.ndarray] = reshape.slice_spectrogram(
+        slices: Sequence[np.ndarray] = reshape.slice_spectrogram(
             spectrogram=mel_spec,
             slice_size=reshape_config.slice_size,
             stride_size=reshape_config.stride_size,
