@@ -163,7 +163,7 @@ def train_svc(curr_val_fold: int,
               model_path_stub: str = "val{:02d}.pkl"):
     curr_val_svc_path = path.join(export_path,
                                   str.format(model_path_stub, curr_val_fold))
-    train_slices, train_labels = _create_train_set(
+    train_slices, train_labels = _create_slices_set(
         all_file_spec_projs=dataset.all_file_spec_projs, labels=dataset.labels)
     svc = SVC()
     svc.fit(train_slices, train_labels)
@@ -172,13 +172,24 @@ def train_svc(curr_val_fold: int,
     return svc
 
 
-def _create_train_set(all_file_spec_projs: Sequence[Sequence[np.ndarray]],
-                      labels: Sequence[int]):
+def report_slices_acc(svc: SVC, train: ProjDataset, val: ProjDataset):
+    train_slices, train_labels = _create_slices_set(train.all_file_spec_projs,
+                                                    train.labels)
+    val_slices, val_labels = _create_slices_set(val.all_file_spec_projs,
+                                                val.labels)
+    train_acc: float = svc.score(train_slices, train_labels)
+    val_acc: float = svc.score(val_slices, val_labels)
+    info_str: str = str.format("train: {:.5f} val: {:.5f}", train_acc, val_acc)
+    print(info_str)
+
+
+def _create_slices_set(all_file_spec_projs: Sequence[Sequence[np.ndarray]],
+                       labels: Sequence[int]):
     train_slices_list: Sequence[np.ndarray] = deque()
     train_labels_list: Sequence[int] = deque()
     for spec_projs, label in zip(all_file_spec_projs, labels):
         train_slices_list.extend(spec_projs)
-        train_labels_list.extend([label] * len(train_slices_list))
+        train_labels_list.extend([label] * len(spec_projs))
     train_slices: np.ndarray = np.array(train_slices_list)
     train_labels: np.ndarray = np.array(train_labels_list)
     return train_slices, train_labels
