@@ -1,5 +1,6 @@
 from collections import deque
-from typing import Callable, Deque, Sequence, Tuple, Union, MutableSequence
+from functools import partial
+from typing import Callable, MutableSequence, Sequence, Tuple
 
 import numpy as np
 
@@ -31,6 +32,13 @@ class PoolFunc:
         return output
 
 
+class MeanStdPool(PoolFunc):
+    def __init__(self):
+        super().__init__(
+            pool_funcs=[partial(np.mean, axis=0),
+                        partial(np.std, axis=0)])
+
+
 def apply_pool_func(
     spec_projs: np.ndarray,
     pool_func: Callable[[np.ndarray], np.ndarray],
@@ -58,4 +66,5 @@ def apply_pool_func(
         curr_spec_projs: np.ndarray = spec_projs[begin_idx:end_idx, :]
         curr_pool_proj: np.ndarray = pool_func(curr_spec_projs)
         pool_projs.append(curr_pool_proj)
+    pool_projs = list(pool_projs)
     return pool_projs
