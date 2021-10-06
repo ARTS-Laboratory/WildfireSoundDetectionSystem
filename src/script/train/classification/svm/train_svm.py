@@ -1,12 +1,11 @@
-from collections import deque
 import os
 import pickle
-import traceback
 from argparse import ArgumentParser, Namespace
+from collections import deque
 from dataclasses import dataclass, field
 from functools import partial
 from os import path
-from typing import Callable, List, Sequence, Tuple, Union
+from typing import Callable, List, Sequence, Tuple
 
 import audio_classifier.common.feature_engineering.pool as feature_pool
 import audio_classifier.config.feature_engineering.pool as conf_pool
@@ -21,6 +20,7 @@ import audio_classifier.train.config.loader as conf_loader
 import audio_classifier.train.data.dataset.composite as dataset_composite
 import numpy as np
 import script.train.common as script_common
+from sklearn.svm import SVC
 from sklearn_plugins.cluster.spherical_kmeans import SphericalKMeans
 
 MetaDataType = script_common.MetaDataType
@@ -155,3 +155,30 @@ def generate_proj_dataset(
             labels=labels)
         ret_datasets.append(curr_proj_dataset)
     return ret_datasets[0], ret_datasets[1]
+
+
+def train_svc(curr_val_fold: int,
+              dataset: ProjDataset,
+              export_path: str,
+              model_path_stub: str = "val{:02d}.pkl"):
+    curr_val_svc_path = path.join(export_path,
+                                  str.format(model_path_stub, curr_val_fold))
+    train_slices, train_labels = _create_train_set(
+        all_file_spec_projs=dataset.all_file_spec_projs, labels=dataset.labels)
+    svc = SVC()
+    svc.fit(train_slices, train_labels)
+    with open(curr_val_svc_path, "wb") as svc_file:
+        pickle.dump(svc, svc_file)
+    return svc
+
+
+def _create_train_set(all_file_spec_projs: Sequence[Sequence[np.ndarray]],
+                      labels: Sequence[int]):
+    train_slices_list: Sequence[np.ndarray] = deque()
+    train_labels_list: Sequence[int] = deque()
+    for spec_projs, label in zip(all_file_spec_projs, labels):
+        train_slices_list.extend(spec_projs)
+        train_labels_list.extend([label] * len(train_slices_list))
+    train_slices: np.ndarray = np.array(train_slices_list)
+    train_labels: np.ndarray = np.array(train_labels_list)
+    return train_slices, train_labels
