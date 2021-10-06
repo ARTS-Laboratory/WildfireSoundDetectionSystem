@@ -3,7 +3,8 @@ from typing import Any, Deque, List, MutableSequence, Sequence
 
 
 def combine_batches(
-        batches_tmp: Deque[Sequence[Sequence[Any]]]) -> Sequence[Sequence[Any]]:
+        batches_tmp: Deque[Sequence[Sequence[Any]]]
+) -> Sequence[Sequence[Any]]:
     """Combine multiple batches into one big dataset.
 
     `batches_tmp` is modified.
@@ -22,4 +23,7 @@ def combine_batches(
         curr_batch: Sequence[Sequence] = batches_tmp.popleft()
         for i, curr_item in enumerate(curr_batch):
             ret_data[i].extend(curr_item)
+    # back to list all at once
+    for i, curr_item in enumerate(ret_data):
+        ret_data[i] = list(ret_data[i])
     return ret_data
