@@ -1,3 +1,4 @@
+import os
 import sys
 from argparse import Namespace
 from typing import List, Sequence
@@ -18,6 +19,7 @@ def main(args: List[str]):
     val_fold_path_stub: str = "val_{:02d}"
     class_skm_path_stub: str = "class_{:02d}/model.pkl"
     export_path: str = argv.export_path
+    os.makedirs(export_path, exist_ok=True)
     dataset_config, mel_spec_config, reshape_config, loader_config, pool_config = train_svm.get_config(
         argv=argv)
     metadata: MetaDataType = script_common.get_metadata(dataset_config)
@@ -47,6 +49,7 @@ def main(args: List[str]):
         svc: SVC = train_svm.train_svc(curr_val_fold=curr_val_fold,
                                        dataset=train,
                                        export_path=export_path)
+        train_svm.report_slices_acc(svc=svc, train=train, val=val)
 
 
 if __name__ == "__main__":
