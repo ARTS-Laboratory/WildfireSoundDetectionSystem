@@ -5,6 +5,7 @@ from typing import List, Sequence
 import script.train.common as script_common
 from audio_classifier.train.data.dataset.composite import KFoldDatasetGenerator
 from script.train.classification.svm import train_svm
+from sklearn.svm import SVC
 from sklearn_plugins.cluster.spherical_kmeans import SphericalKMeans
 
 MetaDataType = script_common.MetaDataType
@@ -43,6 +44,9 @@ def main(args: List[str]):
             dataset_generator=dataset_generator,
             collate_function=collate_func,
             loader_config=loader_config)
+        svc: SVC = train_svm.train_svc(curr_val_fold=curr_val_fold,
+                                       dataset=train,
+                                       export_path=export_path)
 
 
 if __name__ == "__main__":
