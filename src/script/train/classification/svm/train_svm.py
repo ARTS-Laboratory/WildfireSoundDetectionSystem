@@ -16,11 +16,9 @@ import audio_classifier.train.collate.base as collate_base
 import audio_classifier.train.collate.feature_engineering.skm as collate_skm
 import audio_classifier.train.collate.preprocessing.spectrogram.reshape as collate_reshape
 import audio_classifier.train.collate.preprocessing.spectrogram.transform as collate_transform
-import audio_classifier.train.config.alg as conf_alg
 import audio_classifier.train.config.dataset as conf_dataset
 import audio_classifier.train.config.loader as conf_loader
 import audio_classifier.train.data.dataset.composite as dataset_composite
-import audio_classifier.train.data.dataset.composite as dataset_composites
 import numpy as np
 import script.train.common as script_common
 from sklearn_plugins.cluster.spherical_kmeans import SphericalKMeans
