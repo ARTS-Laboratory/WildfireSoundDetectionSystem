@@ -17,7 +17,7 @@ def proj_skl_skm(spec_flat_slices: Sequence[np.ndarray],
     """
     slices: np.ndarray = np.asarray(spec_flat_slices)
     spec_projs_list: List[np.ndarray] = [
-        skm.predict(slices, copy=True) for skm in skms
+        skm.transform(slices, copy=True) for skm in skms
     ]
     if len(spec_projs_list) == 1:
         return spec_projs_list[0]
