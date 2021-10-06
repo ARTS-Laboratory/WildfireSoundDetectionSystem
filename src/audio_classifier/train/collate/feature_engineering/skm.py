@@ -11,9 +11,7 @@ from ....config.feature_engineering.pool import PoolConfig
 
 def skm_skl_proj_collate(
     data: Sequence[Tuple[str, Sequence[np.ndarray], np.ndarray, np.ndarray,
-                         int]],
-    skm: SphericalKMeans,
-    copy: bool = False
+                         int]], skms: Sequence[SphericalKMeans]
 ) -> Sequence[Tuple[str, np.ndarray, np.ndarray, np.ndarray, int]]:
     """For a batch of data, slice and flatten each spectrograms into a list of vectors.
 
@@ -28,7 +26,7 @@ def skm_skl_proj_collate(
                           int]] = deque()
     for filename, spec_flat_slices, sample_freq, sample_time, label in data:
         spec_projs: np.ndarray = proj.proj_skl_skm(
-            spec_flat_slices=spec_flat_slices, skm=skm, copy=copy)
+            spec_flat_slices=spec_flat_slices, skms=skms)
         ret_data.append(
             (filename, spec_projs, sample_freq, sample_time, label))
     return ret_data
