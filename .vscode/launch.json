@@ -42,6 +42,35 @@
                 "--k_step",
                 "5"
             ]
+        },
+        {
+            "name": "train_svm",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/script/train/classification/svm/train_svm.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--dataset_root_path",
+                "${workspaceFolder}/data/BinaryFireSound/dataset/audio_44khz/audio",
+                "--metadata_path",
+                "${workspaceFolder}/data/BinaryFireSound/dataset/audio_44khz/metadata/metadata.csv",
+                "--dataset_config_path",
+                "${workspaceFolder}/config/train/dataset/pre_split_dataset.json",
+                "--spec_config_path",
+                "${workspaceFolder}/config/preprocessing/spec/00.json",
+                "--reshape_config_path",
+                "${workspaceFolder}/config/preprocessing/reshape/00.json",
+                "--pool_config_path",
+                "${workspaceFolder}/config/feature_engineering/pool/00.json",
+                "--loader_config_path",
+                "${workspaceFolder}/config/train/loader/t480s.json",
+                "--skm_root_path",
+                "${workspaceFolder}/model/skm/spec_00_reshape_00_skm_00",
+                "--export_path",
+                "${workspaceFolder}/model/svm/spec_00_reshape_00_skm_00",
+            ]
         }
+
     ]
 }
