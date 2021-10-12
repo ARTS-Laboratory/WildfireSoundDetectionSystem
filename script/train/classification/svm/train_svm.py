@@ -3,8 +3,8 @@ import sys
 from argparse import Namespace
 from typing import List, Sequence
 
-import script.train.classification.common as train_classify_common
 import script.train.common as script_common
+import script.train.skl_loader.skm as skl_skm_laoder
 from audio_classifier.train.data.dataset.composite import KFoldDatasetGenerator
 from script.train.classification.svm import train_svm
 from sklearn.svm import SVC
@@ -29,12 +29,12 @@ def main(args: List[str]):
         dataset_config=dataset_config,
         mel_spec_config=mel_spec_config)
     for curr_val_fold in range(dataset_config.k_folds):
-        curr_val_skm_path_stub: str = train_classify_common.get_curr_val_skm_path_stub(
+        curr_val_skm_path_stub: str = skl_skm_laoder.get_curr_val_skm_path_stub(
             curr_val_fold=curr_val_fold,
             skm_root_path=skm_root_path,
             val_fold_path_stub=val_fold_path_stub,
             class_skm_path_stub=class_skm_path_stub)
-        skms: Sequence[SphericalKMeans] = train_classify_common.load_skl_skms(
+        skms: Sequence[SphericalKMeans] = skl_skm_laoder.load_skl_skms(
             curr_val_skm_path_stub=curr_val_skm_path_stub,
             n_classes=dataset_config.n_classes)
         collate_func: CollateFuncType = train_svm.get_collate_func(

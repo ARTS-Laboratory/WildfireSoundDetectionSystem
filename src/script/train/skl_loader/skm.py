@@ -15,7 +15,7 @@ def get_curr_val_skm_path_stub(curr_val_fold: int, skm_root_path: str,
 
 
 def load_skl_skms(curr_val_skm_path_stub: str,
-              n_classes: int) -> Sequence[SphericalKMeans]:
+                  n_classes: int) -> Sequence[SphericalKMeans]:
     """Load skm model of all classes in current validation fold.
 
     Args:
