@@ -160,7 +160,7 @@ def generate_proj_dataset(
 def train_svc(curr_val_fold: int,
               dataset: ProjDataset,
               export_path: str,
-              model_path_stub: str = "val{:02d}.pkl"):
+              model_path_stub: str = "val_{:02d}.pkl"):
     curr_val_svc_path = path.join(export_path,
                                   str.format(model_path_stub, curr_val_fold))
     train_slices, train_labels = _create_slices_set(
