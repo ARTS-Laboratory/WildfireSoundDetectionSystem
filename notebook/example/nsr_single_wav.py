@@ -34,7 +34,7 @@ CURR_VAL_FOLD: int = 0
 VAL_PATH_STUB: str = "val_{:02d}"
 CLASS_PATH_STUB: str = "class_{:02d}"
 SKM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "skm")
-SVM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "svm")
+SVM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "svm/pool_00")
 
 #%%
 SNR: float = 1.0
