@@ -6,7 +6,7 @@ import numpy as np
 
 
 class PoolFunc:
-    __pool_funcs: Sequence[Callable[[np.ndarray], np.ndarray]]
+    _pool_funcs: Sequence[Callable[[np.ndarray], np.ndarray]]
 
     def __init__(self, pool_funcs: Sequence[Callable[[np.ndarray],
                                                      np.ndarray]]):
@@ -15,7 +15,7 @@ class PoolFunc:
         Args:
             pool_funcs (Sequence[Callable[[np.ndarray], np.ndarray]]): Each pooling function takes an np.ndarray of shape (n_slices, n_features) and output and np.ndarray of shape (n_output_features, )
         """
-        self.__pool_funcs = pool_funcs
+        self._pool_funcs = pool_funcs
 
     def __call__(self, input: np.ndarray) -> np.ndarray:
         """Iterate and apply all the pooling functions and generate an output vector.
@@ -27,7 +27,7 @@ class PoolFunc:
             output (np.ndarray): (n_output_features, )
         """
         output_list: Tuple[np.ndarray, ...] = tuple(
-            [pool_func(input) for pool_func in self.__pool_funcs])
+            [pool_func(input) for pool_func in self._pool_funcs])
         output: np.ndarray = np.concatenate(output_list, axis=0)
         return output
 
@@ -40,7 +40,7 @@ class MeanStdPool(PoolFunc):
 
     def __call__(self, input: np.ndarray) -> np.ndarray:
         if input.shape[0] == 1:
-            return self.__pool_funcs[0](input)
+            return self._pool_funcs[0](input)
         return super().__call__(input)
 
 
