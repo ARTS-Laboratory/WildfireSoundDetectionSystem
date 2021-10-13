@@ -12,6 +12,16 @@ def contrast_collate(
                          int]], threshold_func: Callable[[np.ndarray], float],
     contrast_config: ContrastConfig
 ) -> Sequence[Tuple[str, Sequence[np.ndarray], np.ndarray, np.ndarray, int]]:
+    """For a batch of data, increase contrast to each of the flatten spectrogram slices.
+
+    Args:
+        data (Sequence[Tuple[str, np.ndarray, np.ndarray, np.ndarray, int]]): (batch_size, ) The data from upstream slice flatten function.
+        threshold_func (Callable[[np.ndarray], float]): The function to calculate the threshold.
+        contrast_config (ContrastConfig): The contrast config that specifies the scaling factor.
+
+    Returns:
+        Sequence[Tuple[str, Sequence[np.ndarray], np.ndarray, np.ndarray, int]]: (batch_size, ) The transformed dataset with each data point being a tuple of (filename, pool_projs, sample_freq, sample_time, lable). pool_projs has size (n_slices_pr, n_output_features).
+    """
     ret_data: Deque[Tuple[str, Sequence[np.ndarray], np.ndarray, np.ndarray,
                           int]] = deque()
     for filename, spec_flat_slices, sample_freq, sample_time, label in data:
