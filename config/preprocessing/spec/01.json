@@ -1,0 +1,10 @@
+{
+    "sample_rate": 44100,
+    "n_fft": 256,
+    "window_size": 256,
+    "hop_size": 128,
+    "apply_log": false,
+    "n_mels": 40,
+    "freq_min": 0.0,
+    "freq_max": -1.0
+}
