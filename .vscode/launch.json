@@ -12,10 +12,10 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "fit_skm",
+            "name": "fit_skm_arch_00",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/script/train/feature_engineering/skm/fit_skm.py",
+            "program": "${workspaceFolder}/script/train/feature_engineering/skm/fit/arch_00.py",
             "console": "integratedTerminal",
             "justMyCode": false,
             "args": [
@@ -35,6 +35,40 @@
                 "${workspaceFolder}/config/train/loader/t480s.json",
                 "--export_path",
                 "${workspaceFolder}/model/spec_00_reshape_00_skm_00/skm",
+                "--k_min",
+                "5",
+                "--k_max",
+                "100",
+                "--k_step",
+                "5"
+            ]
+        },
+        {
+            "name": "fit_skm_arch_01",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/script/train/feature_engineering/skm/fit/arch_01.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--dataset_root_path",
+                "${workspaceFolder}/data/BinaryFireSound/dataset/audio_44khz/audio",
+                "--metadata_path",
+                "${workspaceFolder}/data/BinaryFireSound/dataset/audio_44khz/metadata/metadata.csv",
+                "--dataset_config_path",
+                "${workspaceFolder}/config/train/dataset/pre_split_dataset.json",
+                "--spec_config_path",
+                "${workspaceFolder}/config/preprocessing/spec/00.json",
+                "--reshape_config_path",
+                "${workspaceFolder}/config/preprocessing/reshape/00.json",
+                "--contrast_config_path",
+                "${workspaceFolder}/config/feature_engineering/contrast/00.json",
+                "--skm_config_path",
+                "${workspaceFolder}/config/train/alg/skm/00.json",
+                "--loader_config_path",
+                "${workspaceFolder}/config/train/loader/t480s.json",
+                "--export_path",
+                "${workspaceFolder}/model/arch_01/spec_00_reshape_00_skm_00/skm",
                 "--k_min",
                 "5",
                 "--k_max",
@@ -71,6 +105,5 @@
                 "${workspaceFolder}/model/spec_00_reshape_00_skm_00/svm/pool_03",
             ]
         }
-
     ]
 }
