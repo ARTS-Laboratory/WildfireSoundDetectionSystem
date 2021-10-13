@@ -1,4 +1,4 @@
-"""The module contains all the functions and classes related to module configuration.
+"""The module contains all the functions and classes related to contrast configuration.
 """
 import sys
 from argparse import ArgumentParser, HelpFormatter
