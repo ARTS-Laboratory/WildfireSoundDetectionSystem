@@ -38,6 +38,11 @@ class MeanStdPool(PoolFunc):
             pool_funcs=[partial(np.mean, axis=0),
                         partial(np.std, axis=0)])
 
+    def __call__(self, input: np.ndarray) -> np.ndarray:
+        if input.shape[0] == 1:
+            return self.__pool_funcs[0](input)
+        return super().__call__(input)
+
 
 def apply_pool_func(
     spec_projs: np.ndarray,
