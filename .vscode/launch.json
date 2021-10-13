@@ -62,13 +62,13 @@
                 "--reshape_config_path",
                 "${workspaceFolder}/config/preprocessing/reshape/00.json",
                 "--pool_config_path",
-                "${workspaceFolder}/config/feature_engineering/pool/00.json",
+                "${workspaceFolder}/config/feature_engineering/pool/03.json",
                 "--loader_config_path",
                 "${workspaceFolder}/config/train/loader/t480s.json",
                 "--skm_root_path",
                 "${workspaceFolder}/model/spec_00_reshape_00_skm_00/skm",
                 "--export_path",
-                "${workspaceFolder}/model/spec_00_reshape_00_skm_00/svm",
+                "${workspaceFolder}/model/spec_00_reshape_00_skm_00/svm/pool_03",
             ]
         }
 
