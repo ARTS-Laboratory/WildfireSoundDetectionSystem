@@ -12,6 +12,7 @@ import audio_classifier.config.feature_engineering.pool as conf_pool
 import audio_classifier.config.preprocessing.reshape as conf_reshape
 import audio_classifier.config.preprocessing.spec as conf_spec
 import audio_classifier.train.collate.base as collate_base
+import audio_classifier.train.collate.feature_engineering.pool as collate_pool
 import audio_classifier.train.collate.feature_engineering.skm as collate_skm
 import audio_classifier.train.collate.preprocessing.spectrogram.reshape as collate_reshape
 import audio_classifier.train.collate.preprocessing.spectrogram.transform as collate_transform
@@ -94,7 +95,7 @@ def get_collate_func(
             partial(collate_reshape.slice_flatten_collate,
                     config=reshape_config),
             partial(collate_skm.skm_skl_proj_collate, skms=skms),
-            partial(collate_skm.skm_projs_pool_collate,
+            partial(collate_pool.pool_collate,
                     pool_func=pool_func,
                     pool_config=pool_config)
         ])

@@ -50,7 +50,7 @@ def apply_pool_func(
     pool_size: int = -1,
     stride_size: int = -1,
 ) -> Sequence[np.ndarray]:
-    """Apply pooling function on the projection vectors of a file.
+    """Apply pooling function on the all the projection vectors of a file.
 
     Args:
         projections (np.ndarray): (n_slices, n_clusters) The input projection vector of an audio.
