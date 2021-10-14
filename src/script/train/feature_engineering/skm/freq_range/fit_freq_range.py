@@ -25,7 +25,7 @@ class FreqRangeSliceDataset:
     labels: Sequence[int] = field()
 
 
-def generate_freq_range_slice_dataset(
+def generate_slice_dataset(
     curr_val_fold: int,
     dataset_generator: dataset_composite.KFoldDatasetGenerator,
     collate_function: CollateFuncType, loader_config: conf_loader.LoaderConfig
