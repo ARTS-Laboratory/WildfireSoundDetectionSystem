@@ -17,7 +17,7 @@ import numpy as np
 import script.train.common as script_common
 from audio_classifier.train.data.dataset.composite import KFoldDatasetGenerator
 from script.train.feature_engineering.skm import fit_common
-from script.train.feature_engineering.skm.baseline import fit_baseline
+from script.train.feature_engineering.skm.freq_range import fit_freq_range
 
 MetaDataType = script_common.MetaDataType
 CollateFuncType = script_common.CollateFuncType
@@ -46,7 +46,7 @@ def main(args: List[str]):
                     config=reshape_config),
         ])
     for curr_val_fold in range(dataset_config.k_folds):
-        train, _ = fit_baseline.generate_slice_dataset(
+        train, _ = fit_freq_range.generate_slice_dataset(
             curr_val_fold=curr_val_fold,
             dataset_generator=dataset_generator,
             collate_function=collate_func,
