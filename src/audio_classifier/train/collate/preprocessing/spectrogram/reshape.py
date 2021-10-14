@@ -38,7 +38,7 @@ def slice_flatten_collate(
     return ret_data
 
 
-def slice_flatten_freq_range_colalte(
+def slice_flatten_freq_range_collate(
     data: Sequence[Tuple[str, Sequence[np.ndarray], np.ndarray, np.ndarray,
                          int]],
     config: conf_reshape.ReshapeConfig,
