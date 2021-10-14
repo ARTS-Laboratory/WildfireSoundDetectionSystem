@@ -33,9 +33,10 @@ class SliceDataset:
     labels: Sequence[int] = field()
 
 
+@dataclass
 class FreqRangeSliceDataset:
     filenames: Sequence[str] = field()
-    split_flat_slices: Sequence[Sequence[np.ndarray]] = field()
+    range_flat_slices: Sequence[Sequence[np.ndarray]] = field()
     sample_freqs: Sequence[np.ndarray] = field()
     sample_times: Sequence[np.ndarray] = field()
     labels: Sequence[int] = field()
@@ -65,6 +66,39 @@ def generate_slice_dataset(
                                sample_freqs=sample_freqs,
                                sample_times=sample_times,
                                labels=labels)
+        ret_dataset.append(dataset)
+    return ret_dataset[0], ret_dataset[1]
+
+
+def generate_freq_range_slice_dataset(
+    curr_val_fold: int,
+    dataset_generator: dataset_composite.KFoldDatasetGenerator,
+    collate_function: CollateFuncType, loader_config: conf_loader.LoaderConfig
+) -> Tuple[FreqRangeSliceDataset, FreqRangeSliceDataset]:
+    np.seterr(divide="ignore")
+    ret_raw_dataset = script_common.generate_dataset(
+        curr_val_fold=curr_val_fold,
+        dataset_generator=dataset_generator,
+        collate_function=collate_function,
+        loader_config=loader_config)
+    np.seterr(divide="warn")
+    ret_dataset: Sequence[FreqRangeSliceDataset] = list()
+    for raw_dataset in ret_raw_dataset:
+        filenames, all_files_split_flat_slices, sample_freqs, sample_times, labels = raw_dataset
+        n_splits: int = len(all_files_split_flat_slices[0])
+        range_flat_slices: Sequence[Sequence[np.ndarray]] = [
+            [] for _ in range(n_splits)
+        ]
+        for curr_file_splits_flat_slices in all_files_split_flat_slices:
+            for curr_split_idx, curr_split_flat_slices in enumerate(
+                    curr_file_splits_flat_slices):
+                range_flat_slices[curr_split_idx].extend(
+                    curr_split_flat_slices)
+        dataset = FreqRangeSliceDataset(filenames=filenames,
+                                        range_flat_slices=range_flat_slices,
+                                        sample_freqs=sample_freqs,
+                                        sample_times=sample_times,
+                                        labels=labels)
         ret_dataset.append(dataset)
     return ret_dataset[0], ret_dataset[1]
 
