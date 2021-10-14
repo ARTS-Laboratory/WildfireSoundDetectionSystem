@@ -18,7 +18,8 @@ import audio_classifier.train.config.loader as conf_loader
 import numpy as np
 import script.train.common as script_common
 from audio_classifier.train.data.dataset.composite import KFoldDatasetGenerator
-from script.train.feature_engineering.skm import fit_skm
+from script.train.feature_engineering.skm import fit_common
+from script.train.feature_engineering.skm.baseline import fit_baseline
 
 MetaDataType = script_common.MetaDataType
 CollateFuncType = script_common.CollateFuncType
@@ -48,47 +49,48 @@ def main(args: List[str]):
                     contrast_config=contrast_config)
         ])
     for curr_val_fold in range(dataset_config.k_folds):
-        train, _ = fit_skm.generate_slice_dataset(
+        train, _ = fit_baseline.generate_slice_dataset(
             curr_val_fold=curr_val_fold,
             dataset_generator=dataset_generator,
             collate_function=collate_func,
             loader_config=loader_config)
-        slices, labels = fit_skm.convert_to_ndarray(slice_dataset=train)
+        slices, labels = fit_baseline.convert_to_ndarray(slice_dataset=train)
         unique_labels: np.ndarray = np.unique(labels)
         for curr_label in unique_labels:
-            curr_class_path: str = fit_skm.get_curr_class_path(
+            curr_class_path: str = fit_common.get_curr_class_path(
                 export_path, curr_val_fold, curr_label)
-            curr_slices: np.ndarray = fit_skm.get_curr_class_slices(
+            curr_slices: np.ndarray = fit_common.get_curr_class_slices(
                 curr_label, slices, labels)
-            k_value: Union[int, None] = fit_skm.try_k_elbow(
+            k_value: Union[int, None] = fit_common.try_k_elbow(
                 curr_class_path=curr_class_path,
                 slices=curr_slices,
                 skm_config=skm_config,
                 k_range=range(k_min, k_max, k_step))
             if k_value is None:
                 continue
-            skm, model_path = fit_skm.fit_skm(curr_class_path=curr_class_path,
-                                              slices=curr_slices,
-                                              skm_config=skm_config,
-                                              k_value=k_value)
-            is_pass: bool = fit_skm.verify_model(slices=slices,
-                                                 skm=skm,
-                                                 model_path=model_path)
+            skm, model_path = fit_common.fit_skm(
+                curr_class_path=curr_class_path,
+                slices=curr_slices,
+                skm_config=skm_config,
+                k_value=k_value)
+            is_pass: bool = fit_common.verify_model(slices=slices,
+                                                    skm=skm,
+                                                    model_path=model_path)
             if is_pass == False:
                 print("Discrepency between src model and exported model",
                       file=sys.stderr)
                 sys.exit(1)
-            fit_skm.plot_centroids(curr_class_path=curr_class_path,
-                                   skm=skm,
-                                   spec_config=mel_spec_config,
-                                   reshape_config=reshape_config,
-                                   skm_config=skm_config,
-                                   sample_freq=train.sample_freqs[0],
-                                   sample_time=train.sample_times[0])
-            fit_skm.plot_silhouette(curr_class_path=curr_class_path,
-                                    slices=curr_slices,
-                                    skm=skm,
-                                    k_value=k_value)
+            fit_common.plot_centroids(curr_plot_path=curr_class_path,
+                                      skm=skm,
+                                      spec_config=mel_spec_config,
+                                      reshape_config=reshape_config,
+                                      skm_config=skm_config,
+                                      sample_freq=train.sample_freqs[0],
+                                      sample_time=train.sample_times[0])
+            fit_common.plot_silhouette(curr_plot_path=curr_class_path,
+                                       slices=curr_slices,
+                                       skm=skm,
+                                       k_value=k_value)
 
 
 def get_argparse() -> ArgumentParser:

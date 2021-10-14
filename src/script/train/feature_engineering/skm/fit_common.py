@@ -1,15 +1,12 @@
 import os
 import pickle
 import traceback
-from dataclasses import dataclass, field
 from os import path
-from typing import List, Sequence, Tuple, Union
+from typing import Tuple, Union
 
 import audio_classifier.config.preprocessing.reshape as conf_reshape
 import audio_classifier.config.preprocessing.spec as conf_spec
 import audio_classifier.train.config.alg as conf_alg
-import audio_classifier.train.config.loader as conf_loader
-import audio_classifier.train.data.dataset.composite as dataset_composite
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
@@ -22,123 +19,6 @@ matplotlib.use("agg", force=True)
 
 MetaDataType = script_common.MetaDataType
 CollateFuncType = script_common.CollateFuncType
-
-
-@dataclass
-class SliceDataset:
-    filenames: Sequence[str] = field()
-    flat_slices: Sequence[np.ndarray] = field()
-    sample_freqs: Sequence[np.ndarray] = field()
-    sample_times: Sequence[np.ndarray] = field()
-    labels: Sequence[int] = field()
-
-
-@dataclass
-class FreqRangeSliceDataset:
-    filenames: Sequence[str] = field()
-    range_flat_slices: Sequence[Sequence[np.ndarray]] = field()
-    sample_freqs: Sequence[np.ndarray] = field()
-    sample_times: Sequence[np.ndarray] = field()
-    labels: Sequence[int] = field()
-
-
-def generate_slice_dataset(
-    curr_val_fold: int,
-    dataset_generator: dataset_composite.KFoldDatasetGenerator,
-    collate_function: CollateFuncType, loader_config: conf_loader.LoaderConfig
-) -> Tuple[SliceDataset, SliceDataset]:
-    """Generate the slice dataset.
-
-    Args:
-        curr_val_fold (int): The current validation fold number
-        dataset_generator (dataset_composite.KFoldDatasetGenerator): The dataset generator.
-        collate_function (CollateFuncType): The function used to process sound wave.
-        loader_config (conf_loader.LoaderConfig): The loader configuration.
-
-    Returns:
-        Tuple[SliceDataset, SliceDataset]: (train_dataset, val_dataset)
-    """
-    np.seterr(divide="ignore")
-    ret_raw_dataset = script_common.generate_dataset(
-        curr_val_fold=curr_val_fold,
-        dataset_generator=dataset_generator,
-        collate_function=collate_function,
-        loader_config=loader_config)
-    np.seterr(divide="warn")
-    ret_dataset: Sequence[SliceDataset] = list()
-    for raw_dataset in ret_raw_dataset:
-        filenames, all_files_flat_slices, sample_freqs, sample_times, labels = raw_dataset
-        flat_slices: List[np.ndarray] = [
-            slices for curr_file_flat_slices in all_files_flat_slices
-            for slices in curr_file_flat_slices
-        ]
-        dataset = SliceDataset(filenames=filenames,
-                               flat_slices=flat_slices,
-                               sample_freqs=sample_freqs,
-                               sample_times=sample_times,
-                               labels=labels)
-        ret_dataset.append(dataset)
-    return ret_dataset[0], ret_dataset[1]
-
-
-def generate_freq_range_slice_dataset(
-    curr_val_fold: int,
-    dataset_generator: dataset_composite.KFoldDatasetGenerator,
-    collate_function: CollateFuncType, loader_config: conf_loader.LoaderConfig
-) -> Tuple[FreqRangeSliceDataset, FreqRangeSliceDataset]:
-    """Generate the frequency range slice dataset.
-
-    Args:
-        curr_val_fold (int): The current validation fold number
-        dataset_generator (dataset_composite.KFoldDatasetGenerator): The dataset generator.
-        collate_function (CollateFuncType): The function used to process sound wave.
-        loader_config (conf_loader.LoaderConfig): The loader configuration.
-
-    Returns:
-        Tuple[FreqRangeSliceDataset, FreqRangeSliceDataset]: (train_dataset, val_dataset)
-    """
-    np.seterr(divide="ignore")
-    ret_raw_dataset = script_common.generate_dataset(
-        curr_val_fold=curr_val_fold,
-        dataset_generator=dataset_generator,
-        collate_function=collate_function,
-        loader_config=loader_config)
-    np.seterr(divide="warn")
-    ret_dataset: Sequence[FreqRangeSliceDataset] = list()
-    for raw_dataset in ret_raw_dataset:
-        filenames, all_files_split_flat_slices, sample_freqs, sample_times, labels = raw_dataset
-        n_splits: int = len(all_files_split_flat_slices[0])
-        range_flat_slices: Sequence[Sequence[np.ndarray]] = [
-            [] for _ in range(n_splits)
-        ]
-        for curr_file_splits_flat_slices in all_files_split_flat_slices:
-            for curr_split_idx, curr_split_flat_slices in enumerate(
-                    curr_file_splits_flat_slices):
-                range_flat_slices[curr_split_idx].extend(
-                    curr_split_flat_slices)
-        dataset = FreqRangeSliceDataset(filenames=filenames,
-                                        range_flat_slices=range_flat_slices,
-                                        sample_freqs=sample_freqs,
-                                        sample_times=sample_times,
-                                        labels=labels)
-        ret_dataset.append(dataset)
-    return ret_dataset[0], ret_dataset[1]
-
-
-def convert_to_ndarray(
-        slice_dataset: SliceDataset) -> Tuple[np.ndarray, np.ndarray]:
-    """Wrap slices and labels as np.ndarray.
-
-    Args:
-        slice_dataset (SliceDataset): The slice dataset to be converted
-
-    Returns:
-        slices (np.ndarray): (n_slices, n_sample_freq * slice_size) The converted slices.
-        labels (np.ndarray): (n_slices, ) The converted labels.
-    """
-    slices: np.ndarray = np.asarray(slice_dataset.flat_slices)
-    labels: np.ndarray = np.asarray(slice_dataset.labels)
-    return slices, labels
 
 
 def get_curr_class_slices(curr_class: int, slices: np.ndarray,
@@ -165,26 +45,6 @@ def get_curr_class_path(export_path: str, curr_val_fold: int,
                                      str.format("class_{:02d}", curr_class))
     os.makedirs(curr_class_path, exist_ok=True)
     return curr_class_path
-
-
-def get_curr_class_range_path(export_path: str, curr_val_fold: int,
-                              curr_class: int, curr_range_path: str) -> str:
-    """Get and create curr_class_path
-
-    Args:
-        export_path (str): [description]
-        curr_val_fold (int): [description]
-        curr_class (int): [description]
-        curr_range_path (str): [description]
-
-    Returns:
-        str: [description]
-    """
-    curr_class_path: str = get_curr_class_path(export_path=export_path,
-                                               curr_val_fold=curr_val_fold,
-                                               curr_class=curr_class)
-    curr_class_range_path: str = os.path.join(curr_class_path, curr_range_path)
-    return curr_class_range_path
 
 
 def try_k_elbow(curr_class_path: str,
@@ -282,7 +142,7 @@ def verify_model(slices: np.ndarray, skm: SphericalKMeans,
     return is_pass
 
 
-def plot_centroids(curr_class_path: str,
+def plot_centroids(curr_plot_path: str,
                    skm: SphericalKMeans,
                    spec_config: conf_spec.MelSpecConfig,
                    reshape_config: conf_reshape.ReshapeConfig,
@@ -319,7 +179,7 @@ def plot_centroids(curr_class_path: str,
                          order='F')
     sample_freq = sample_freq
     sample_time = sample_time[0:slice_size]
-    curr_plot_root_path: str = path.join(curr_class_path, "centroids")
+    curr_plot_root_path: str = path.join(curr_plot_path, "centroids")
     spec_plot_path: str = path.join(curr_plot_root_path, "spec")
     raw_plot_path: str = path.join(curr_plot_root_path, "raw")
     os.makedirs(spec_plot_path, exist_ok=True)
@@ -345,7 +205,7 @@ def plot_centroids(curr_class_path: str,
         plt.close()
 
 
-def plot_silhouette(curr_class_path: str,
+def plot_silhouette(curr_plot_path: str,
                     slices: np.ndarray,
                     skm: SphericalKMeans,
                     k_value: int,
@@ -356,7 +216,7 @@ def plot_silhouette(curr_class_path: str,
                                                is_fitted=True)
     visualizer.fit(slices)
     visualizer.finalize()
-    fig_path: str = path.join(curr_class_path,
+    fig_path: str = path.join(curr_plot_path,
                               str.format(filename_stub, k_value))
     figure.savefig(fname=fig_path, dpi=300)
     plt.close(fig=figure)

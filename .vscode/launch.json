@@ -15,7 +15,7 @@
             "name": "fit_skm_arch_00",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/script/train/feature_engineering/skm/fit/arch_00.py",
+            "program": "${workspaceFolder}/script/train/feature_engineering/skm/fit/baseline/base.py",
             "console": "integratedTerminal",
             "justMyCode": false,
             "args": [
@@ -47,7 +47,7 @@
             "name": "fit_skm_arch_01",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/script/train/feature_engineering/skm/fit/arch_01.py",
+            "program": "${workspaceFolder}/script/train/feature_engineering/skm/fit/baseline/contrast.py",
             "console": "integratedTerminal",
             "justMyCode": false,
             "args": [
