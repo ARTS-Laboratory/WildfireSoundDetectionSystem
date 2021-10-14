@@ -33,6 +33,14 @@ class SliceDataset:
     labels: Sequence[int] = field()
 
 
+class FreqRangeSliceDataset:
+    filenames: Sequence[str] = field()
+    split_flat_slices: Sequence[Sequence[np.ndarray]] = field()
+    sample_freqs: Sequence[np.ndarray] = field()
+    sample_times: Sequence[np.ndarray] = field()
+    labels: Sequence[int] = field()
+
+
 def generate_slice_dataset(
     curr_val_fold: int,
     dataset_generator: dataset_composite.KFoldDatasetGenerator,
@@ -101,6 +109,26 @@ def get_curr_class_path(export_path: str, curr_val_fold: int,
                                      str.format("class_{:02d}", curr_class))
     os.makedirs(curr_class_path, exist_ok=True)
     return curr_class_path
+
+
+def get_curr_class_range_path(export_path: str, curr_val_fold: int,
+                              curr_class: int, curr_range_path: str) -> str:
+    """Get and create curr_class_path
+
+    Args:
+        export_path (str): [description]
+        curr_val_fold (int): [description]
+        curr_class (int): [description]
+        curr_range_path (str): [description]
+
+    Returns:
+        str: [description]
+    """
+    curr_class_path: str = get_curr_class_path(export_path=export_path,
+                                               curr_val_fold=curr_val_fold,
+                                               curr_class=curr_class)
+    curr_class_range_path: str = os.path.join(curr_class_path, curr_range_path)
+    return curr_class_range_path
 
 
 def try_k_elbow(curr_class_path: str,
