@@ -47,6 +47,17 @@ def generate_slice_dataset(
     dataset_generator: dataset_composite.KFoldDatasetGenerator,
     collate_function: CollateFuncType, loader_config: conf_loader.LoaderConfig
 ) -> Tuple[SliceDataset, SliceDataset]:
+    """Generate the slice dataset.
+
+    Args:
+        curr_val_fold (int): The current validation fold number
+        dataset_generator (dataset_composite.KFoldDatasetGenerator): The dataset generator.
+        collate_function (CollateFuncType): The function used to process sound wave.
+        loader_config (conf_loader.LoaderConfig): The loader configuration.
+
+    Returns:
+        Tuple[SliceDataset, SliceDataset]: (train_dataset, val_dataset)
+    """
     np.seterr(divide="ignore")
     ret_raw_dataset = script_common.generate_dataset(
         curr_val_fold=curr_val_fold,
@@ -75,6 +86,17 @@ def generate_freq_range_slice_dataset(
     dataset_generator: dataset_composite.KFoldDatasetGenerator,
     collate_function: CollateFuncType, loader_config: conf_loader.LoaderConfig
 ) -> Tuple[FreqRangeSliceDataset, FreqRangeSliceDataset]:
+    """Generate the frequency range slice dataset.
+
+    Args:
+        curr_val_fold (int): The current validation fold number
+        dataset_generator (dataset_composite.KFoldDatasetGenerator): The dataset generator.
+        collate_function (CollateFuncType): The function used to process sound wave.
+        loader_config (conf_loader.LoaderConfig): The loader configuration.
+
+    Returns:
+        Tuple[FreqRangeSliceDataset, FreqRangeSliceDataset]: (train_dataset, val_dataset)
+    """
     np.seterr(divide="ignore")
     ret_raw_dataset = script_common.generate_dataset(
         curr_val_fold=curr_val_fold,
