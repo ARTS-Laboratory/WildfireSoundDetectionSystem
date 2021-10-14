@@ -3,7 +3,7 @@
 import sys
 from argparse import ArgumentParser, HelpFormatter
 from dataclasses import dataclass, field
-from typing import Sequence
+from typing import List, Sequence
 
 from dataclasses_json import dataclass_json
 
@@ -21,7 +21,8 @@ class FreqRangeConfig:
     Attributes:
         split_freq (Sequence[float]): The starting frequency of each spectrogram.
     """
-    split_freq: Sequence[float] = field(default=[0, 5000, 18000])
+    split_freq: List[float] = field(
+        default_factory=lambda: [0.0, 5000.0, 18000.0])
 
     def __post_init__(self):
         return
@@ -79,4 +80,4 @@ class FreqRangeArgumentParser(ArgumentParser):
             "--freq_range_config_path",
             required=True,
             type=str,
-            help="path to the spectrogram configuration *.json file")
+            help="path to the frequency range configuration *.json file")
