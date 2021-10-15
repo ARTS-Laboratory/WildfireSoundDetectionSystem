@@ -1,6 +1,7 @@
+from collections import deque
 from dataclasses import dataclass, field
 from os import path
-from typing import List, Sequence, Tuple
+from typing import List, MutableSequence, Sequence, Tuple
 
 import audio_classifier.train.config.loader as conf_loader
 import audio_classifier.train.data.dataset.composite as dataset_composite
@@ -75,6 +76,15 @@ def convert_to_ndarray(
         slices (np.ndarray): (n_slices, n_sample_freq * slice_size) The converted slices.
         labels (np.ndarray): (n_slices, ) The converted labels.
     """
-    slices: np.ndarray = np.asarray(slice_dataset.flat_slices)
-    labels: np.ndarray = np.asarray(slice_dataset.labels)
+    slices_seq: MutableSequence[np.ndarray] = deque()
+    labels_seq: MutableSequence[int] = deque()
+    assert len(slice_dataset.labels) == len(slice_dataset.flat_slices)
+    for curr_label, curr_file_slices in zip(slice_dataset.labels,
+                                            slice_dataset.flat_slices):
+        slices_seq.extend(curr_file_slices)
+        labels_seq.extend([curr_label] * len(curr_file_slices))
+    slices_seq = list(slices_seq)
+    labels_seq = list(labels_seq)
+    slices: np.ndarray = np.asarray(slices_seq)
+    labels: np.ndarray = np.asarray(labels_seq)
     return slices, labels
