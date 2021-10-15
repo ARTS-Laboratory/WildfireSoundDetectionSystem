@@ -13,8 +13,17 @@ CollateFuncType = script_common.CollateFuncType
 
 @dataclass
 class SliceDataset:
+    """
+
+    Attributes:
+        filenames (Sequence[str]): (n_files, )
+        flat_slices (Sequence[Sequence[np.ndarray]]): (n_files, n_slices, n_freq_bins*slice_size)
+        sample_freqs (Sequence[np.ndarray]): (n_files, n_freq_bins)
+        sample_times (Sequence[np.ndarray]): (n_files, n_time_stamps)
+        labels (Sequence[int]): (n_file, )
+    """
     filenames: Sequence[str] = field()
-    flat_slices: Sequence[np.ndarray] = field()
+    flat_slices: Sequence[Sequence[np.ndarray]] = field()
     sample_freqs: Sequence[np.ndarray] = field()
     sample_times: Sequence[np.ndarray] = field()
     labels: Sequence[int] = field()
@@ -45,11 +54,7 @@ def generate_slice_dataset(
     np.seterr(divide="warn")
     ret_dataset: Sequence[SliceDataset] = list()
     for raw_dataset in ret_raw_dataset:
-        filenames, all_files_flat_slices, sample_freqs, sample_times, labels = raw_dataset
-        flat_slices: List[np.ndarray] = [
-            slices for curr_file_flat_slices in all_files_flat_slices
-            for slices in curr_file_flat_slices
-        ]
+        filenames, flat_slices, sample_freqs, sample_times, labels = raw_dataset
         dataset = SliceDataset(filenames=filenames,
                                flat_slices=flat_slices,
                                sample_freqs=sample_freqs,
