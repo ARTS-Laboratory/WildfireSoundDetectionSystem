@@ -54,10 +54,25 @@ def train_svc(curr_val_fold: int,
               svc_config: SVCConfig,
               export_path: str,
               model_path_stub: str = "val_{:02d}.pkl") -> SVC:
-    curr_val_svc_path = path.join(export_path,
-                                  str.format(model_path_stub, curr_val_fold))
     train_slices, train_labels = _create_slices_set(
         all_file_spec_projs=dataset.all_file_spec_projs, labels=dataset.labels)
+    svc: SVC = train_svc_np(curr_val_fold=curr_val_fold,
+                            train_slices=train_slices,
+                            train_labels=train_labels,
+                            svc_config=svc_config,
+                            export_path=export_path,
+                            model_path_stub=model_path_stub)
+    return svc
+
+
+def train_svc_np(curr_val_fold: int,
+                 train_slices: np.ndarray,
+                 train_labels: np.ndarray,
+                 svc_config: SVCConfig,
+                 export_path: str,
+                 model_path_stub: str = "val_{:02d}.pkl") -> SVC:
+    curr_val_svc_path = path.join(export_path,
+                                  str.format(model_path_stub, curr_val_fold))
     svc = SVC(C=svc_config.C,
               kernel=svc_config.kernel,
               degree=svc_config.degree,
@@ -74,6 +89,16 @@ def report_slices_acc(svc: SVC, train: ProjDataset, val: ProjDataset):
                                                     train.labels)
     val_slices, val_labels = _create_slices_set(val.all_file_spec_projs,
                                                 val.labels)
+    report_slices_acc_np(svc=svc,
+                         train_slices=train_slices,
+                         train_labels=train_labels,
+                         val_slices=val_slices,
+                         val_labels=val_labels)
+
+
+def report_slices_acc_np(svc: SVC, train_slices: np.ndarray,
+                         train_labels: np.ndarray, val_slices: np.ndarray,
+                         val_labels: np.ndarray):
     train_acc: float = svc.score(train_slices, train_labels)
     val_acc: float = svc.score(val_slices, val_labels)
     info_str: str = str.format("train: {:.5f} val: {:.5f}", train_acc, val_acc)
