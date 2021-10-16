@@ -21,23 +21,23 @@ from scipy.stats import rv_continuous, norm
 # AUDIO_PATH: str = "../test/test_dataset/folder_dataset/2_0.wav"
 AUDIO_PATH: str = "../test/test_audio/0_0.wav"
 CONFIG_ROOT_PATH: str = "../../config"
-MODEL_ROOT_PATH: str = "../../model/spec_00_reshape_00_skm_00"
+MODEL_ROOT_PATH: str = "../../model/baseline/base/spec_00_reshape_00_skm_00/"
 SPEC_CONFIG_PATH: str = os.path.join(CONFIG_ROOT_PATH,
                                      "preprocessing/spec/00.json")
 RESHAPE_CONFIG_PATH: str = os.path.join(CONFIG_ROOT_PATH,
                                         "preprocessing/reshape/00.json")
 POOL_CONFIG_PATH: str = os.path.join(CONFIG_ROOT_PATH,
-                                     "feature_engineering/pool/00.json")
+                                     "feature_engineering/pool/02.json")
 
 #%%
 CURR_VAL_FOLD: int = 0
 VAL_PATH_STUB: str = "val_{:02d}"
 CLASS_PATH_STUB: str = "class_{:02d}"
 SKM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "skm")
-SVM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "svm/pool_00")
+SVM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "svm", "pool_02_svc_02")
 
 #%%
-SNR: float = 1.0
+SNR: float = 20
 
 #%%
 spec_config: conf_spec.MelSpecConfig = conf_spec.get_spec_config_from_json(
@@ -136,4 +136,8 @@ CURR_VAL_SVC_PATH: str = get_svc_path(curr_val_fold=CURR_VAL_FOLD,
                                       val_path_stub=VAL_PATH_STUB)
 svc: SVC = get_svc(CURR_VAL_SVC_PATH)
 #%%
-svc.predict(np.asarray(pool_slices))
+pred = svc.predict(np.asarray(pool_slices))
+res = np.bincount(pred,minlength=2)
+print(res)
+
+# %%
