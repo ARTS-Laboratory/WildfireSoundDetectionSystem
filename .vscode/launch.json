@@ -170,7 +170,7 @@
                 "--skm_root_path",
                 "${workspaceFolder}/model/baseline/base/spec_00_reshape_00_skm_00/skm",
                 "--export_path",
-                "${workspaceFolder}/model/baseline/base/spec_00_reshape_00_skm_00/svm/pool_02_pca_00_svc_02",
+                "${workspaceFolder}/model/baseline/base/spec_00_reshape_00_skm_00/svm/pool_02_pca_00_svc_00",
             ]
         }
 

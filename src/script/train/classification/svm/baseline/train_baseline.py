@@ -1,23 +1,13 @@
 from argparse import ArgumentParser, Namespace
-from functools import partial
-from os import path
-from typing import Callable, List, Sequence
+from typing import List
 
-import audio_classifier.common.feature_engineering.pool as feature_pool
 import audio_classifier.config.feature_engineering.pool as conf_pool
 import audio_classifier.config.preprocessing.reshape as conf_reshape
 import audio_classifier.config.preprocessing.spec as conf_spec
-import audio_classifier.train.collate.base as collate_base
-import audio_classifier.train.collate.feature_engineering.pool as collate_pool
-import audio_classifier.train.collate.feature_engineering.skm as collate_skm
-import audio_classifier.train.collate.preprocessing.spectrogram.reshape as collate_reshape
-import audio_classifier.train.collate.preprocessing.spectrogram.transform as collate_transform
 import audio_classifier.train.config.alg as conf_alg
 import audio_classifier.train.config.dataset as conf_dataset
 import audio_classifier.train.config.loader as conf_loader
-import numpy as np
 import script.train.common as script_common
-from sklearn_plugins.cluster.spherical_kmeans import SphericalKMeans
 
 MetaDataType = script_common.MetaDataType
 CollateFuncType = script_common.CollateFuncType
