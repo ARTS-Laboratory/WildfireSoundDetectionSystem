@@ -1,6 +1,5 @@
 """The module contains all the functions and classes related to training time specific algorithm configuration.
 """
-from enum import Enum
 import sys
 from abc import ABC
 from argparse import ArgumentParser, HelpFormatter
@@ -29,10 +28,8 @@ class MLConfigBase(ABC):
            order=False,
            unsafe_hash=False,
            frozen=False)
-class SKMConfig(MLConfigBase):
+class PCAConfig(MLConfigBase):
     n_components: float = field(default=0.8)
-    normalize: bool = field(default=True)
-    standardize: bool = field(default=True)
     whiten: bool = field(default=True)
 
 
@@ -43,8 +40,20 @@ class SKMConfig(MLConfigBase):
            order=False,
            unsafe_hash=False,
            frozen=False)
-class NuSVCConfig(MLConfigBase):
-    nu: float = field(default=0.5)
+class SKMConfig(PCAConfig):
+    normalize: bool = field(default=True)
+    standardize: bool = field(default=True)
+
+
+@dataclass_json
+@dataclass(init=True,
+           repr=True,
+           eq=True,
+           order=False,
+           unsafe_hash=False,
+           frozen=False)
+class SVCConfig(MLConfigBase):
+    C: float = field(default=0.5)
     kernel: str = field(default="rbf")
     degree: int = field(default=3)
     gamma: Union[str, float] = field(default="scale")
@@ -56,7 +65,8 @@ class NuSVCConfig(MLConfigBase):
             self.gamma = str.lower(self.gamma)
 
 
-MLConfigType = TypeVar("MLConfigType", MLConfigBase, SKMConfig, NuSVCConfig)
+MLConfigType = TypeVar("MLConfigType", MLConfigBase, PCAConfig, SKMConfig,
+                       SVCConfig)
 
 
 def get_alg_config_from_json(config_file_path: str,
@@ -116,7 +126,7 @@ class SKMArgumentParser(ArgumentParser):
                           help="path to the SKM configuration *.json file")
 
 
-class NuSVCArgumentParser(ArgumentParser):
+class SVCArgumentParser(ArgumentParser):
     def __init__(self,
                  prog=None,
                  usage=None,
@@ -145,4 +155,4 @@ class NuSVCArgumentParser(ArgumentParser):
         self.add_argument("--svc_config_path",
                           required=True,
                           type=str,
-                          help="path to the NuSVC configuration *.json file")
+                          help="path to the SVC configuration *.json file")

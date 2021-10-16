@@ -1,28 +1,15 @@
-import os
 import pickle
-from argparse import ArgumentParser, Namespace
 from collections import deque
 from dataclasses import dataclass, field
-from functools import partial
 from os import path
-from typing import Callable, List, Sequence, Tuple
+from typing import Sequence, Tuple
 
-import audio_classifier.common.feature_engineering.pool as feature_pool
-import audio_classifier.config.feature_engineering.pool as conf_pool
-import audio_classifier.config.preprocessing.reshape as conf_reshape
-import audio_classifier.config.preprocessing.spec as conf_spec
-import audio_classifier.train.collate.base as collate_base
-import audio_classifier.train.collate.feature_engineering.pool as collate_pool
-import audio_classifier.train.collate.feature_engineering.skm as collate_skm
-import audio_classifier.train.collate.preprocessing.spectrogram.reshape as collate_reshape
-import audio_classifier.train.collate.preprocessing.spectrogram.transform as collate_transform
-from audio_classifier.train.config.alg import NuSVCConfig
-import audio_classifier.train.config.dataset as conf_dataset
 import audio_classifier.train.config.loader as conf_loader
 import audio_classifier.train.data.dataset.composite as dataset_composite
 import numpy as np
 import script.train.common as script_common
-from sklearn.svm import NuSVC
+from audio_classifier.train.config.alg import SVCConfig
+from sklearn.svm import SVC
 
 MetaDataType = script_common.MetaDataType
 CollateFuncType = script_common.CollateFuncType
@@ -64,25 +51,25 @@ def generate_proj_dataset(
 
 def train_svc(curr_val_fold: int,
               dataset: ProjDataset,
-              svc_config: NuSVCConfig,
+              svc_config: SVCConfig,
               export_path: str,
-              model_path_stub: str = "val_{:02d}.pkl") -> NuSVC:
+              model_path_stub: str = "val_{:02d}.pkl") -> SVC:
     curr_val_svc_path = path.join(export_path,
                                   str.format(model_path_stub, curr_val_fold))
     train_slices, train_labels = _create_slices_set(
         all_file_spec_projs=dataset.all_file_spec_projs, labels=dataset.labels)
-    svc = NuSVC(nu=svc_config.nu,
-                kernel=svc_config.kernel,
-                degree=svc_config.degree,
-                gamma=svc_config.gamma,
-                coef0=svc_config.coef0)
+    svc = SVC(C=svc_config.C,
+              kernel=svc_config.kernel,
+              degree=svc_config.degree,
+              gamma=svc_config.gamma,
+              coef0=svc_config.coef0)
     svc.fit(train_slices, train_labels)
     with open(curr_val_svc_path, "wb") as svc_file:
         pickle.dump(svc, svc_file)
     return svc
 
 
-def report_slices_acc(svc: NuSVC, train: ProjDataset, val: ProjDataset):
+def report_slices_acc(svc: SVC, train: ProjDataset, val: ProjDataset):
     train_slices, train_labels = _create_slices_set(train.all_file_spec_projs,
                                                     train.labels)
     val_slices, val_labels = _create_slices_set(val.all_file_spec_projs,

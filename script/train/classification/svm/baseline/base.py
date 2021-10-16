@@ -15,7 +15,7 @@ import script.train.skl_loader.skm as skl_skm_laoder
 from audio_classifier.train.data.dataset.composite import KFoldDatasetGenerator
 from script.train.classification.svm import train_common
 from script.train.classification.svm.baseline import train_baseline
-from sklearn.svm import NuSVC
+from sklearn.svm import SVC
 from sklearn_plugins.cluster.spherical_kmeans import SphericalKMeans
 
 MetaDataType = script_common.MetaDataType
@@ -61,10 +61,10 @@ def main(args: List[str]):
             dataset_generator=dataset_generator,
             collate_function=collate_func,
             loader_config=loader_config)
-        svc: NuSVC = train_common.train_svc(curr_val_fold=curr_val_fold,
-                                            dataset=train,
-                                            svc_config=svc_config,
-                                            export_path=export_path)
+        svc: SVC = train_common.train_svc(curr_val_fold=curr_val_fold,
+                                          dataset=train,
+                                          svc_config=svc_config,
+                                          export_path=export_path)
         train_common.report_slices_acc(svc=svc, train=train, val=val)
 
 

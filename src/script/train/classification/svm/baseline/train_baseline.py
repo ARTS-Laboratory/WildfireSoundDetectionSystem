@@ -1,11 +1,7 @@
-import os
-import pickle
 from argparse import ArgumentParser, Namespace
-from collections import deque
-from dataclasses import dataclass, field
 from functools import partial
 from os import path
-from typing import Callable, List, Sequence, Tuple
+from typing import Callable, List, Sequence
 
 import audio_classifier.common.feature_engineering.pool as feature_pool
 import audio_classifier.config.feature_engineering.pool as conf_pool
@@ -19,10 +15,8 @@ import audio_classifier.train.collate.preprocessing.spectrogram.transform as col
 import audio_classifier.train.config.alg as conf_alg
 import audio_classifier.train.config.dataset as conf_dataset
 import audio_classifier.train.config.loader as conf_loader
-import audio_classifier.train.data.dataset.composite as dataset_composite
 import numpy as np
 import script.train.common as script_common
-from sklearn.svm import NuSVC
 from sklearn_plugins.cluster.spherical_kmeans import SphericalKMeans
 
 MetaDataType = script_common.MetaDataType
@@ -35,7 +29,7 @@ def get_argparse() -> ArgumentParser:
         conf_spec.SpecConfigArgumentParser(),
         conf_reshape.ReshapeConfigArgumentParser(),
         conf_pool.PoolConfigArgumentParser(),
-        conf_alg.NuSVCArgumentParser(),
+        conf_alg.SVCArgumentParser(),
         conf_loader.LoaderConfigArgumentParser()
     ])
     parser.add_argument("--skm_root_path",
@@ -70,8 +64,8 @@ def get_config(argv: Namespace):
         RESHAPE_CONFIG_PATH)
     loader_config: conf_loader.LoaderConfig = conf_loader.get_loader_config_from_json(
         LOADER_CONFIG_PATH)
-    svc_config: conf_alg.NuSVCConfig = conf_alg.get_alg_config_from_json(
-        SVC_CONFIG_PATH, conf_alg.NuSVCConfig)
+    svc_config: conf_alg.SVCConfig = conf_alg.get_alg_config_from_json(
+        SVC_CONFIG_PATH, conf_alg.SVCConfig)
     pool_config: conf_pool.PoolConfig = conf_pool.get_pool_config_from_json(
         POOL_CONFIG_PATH)
     return dataset_config, mel_spec_config, reshape_config, pool_config, svc_config, loader_config
