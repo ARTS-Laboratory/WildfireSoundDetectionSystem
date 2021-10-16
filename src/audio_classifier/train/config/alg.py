@@ -94,6 +94,38 @@ def get_alg_config_from_json(config_file_path: str,
     return config
 
 
+class PCAArgumentParser(ArgumentParser):
+    def __init__(self,
+                 prog=None,
+                 usage=None,
+                 description=None,
+                 epilog=None,
+                 parents=[],
+                 formatter_class=HelpFormatter,
+                 prefix_chars='-',
+                 fromfile_prefix_chars=None,
+                 argument_default=None,
+                 conflict_handler='error',
+                 add_help=False,
+                 allow_abbrev=True):
+        super().__init__(prog=prog,
+                         usage=usage,
+                         description=description,
+                         epilog=epilog,
+                         parents=parents,
+                         formatter_class=formatter_class,
+                         prefix_chars=prefix_chars,
+                         fromfile_prefix_chars=fromfile_prefix_chars,
+                         argument_default=argument_default,
+                         conflict_handler=conflict_handler,
+                         add_help=add_help,
+                         allow_abbrev=allow_abbrev)
+        self.add_argument("--pca_config_path",
+                          required=True,
+                          type=str,
+                          help="path to the PCA configuration *.json file")
+
+
 class SKMArgumentParser(ArgumentParser):
     def __init__(self,
                  prog=None,
