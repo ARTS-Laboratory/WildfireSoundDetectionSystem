@@ -34,7 +34,7 @@
                 "--loader_config_path",
                 "${workspaceFolder}/config/train/loader/t480s.json",
                 "--export_path",
-                "${workspaceFolder}/model/spec_00_reshape_00_skm_00/skm",
+                "${workspaceFolder}/model/baseline/base/spec_00_reshape_00_skm_00/skm",
                 "--k_min",
                 "5",
                 "--k_max",
@@ -112,10 +112,10 @@
             ]
         },
         {
-            "name": "train_svm",
+            "name": "train_svm_baseline_base",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/script/train/classification/svm/train_svm.py",
+            "program": "${workspaceFolder}/script/train/classification/svm/baseline/base.py",
             "console": "integratedTerminal",
             "justMyCode": false,
             "args": [
@@ -130,13 +130,15 @@
                 "--reshape_config_path",
                 "${workspaceFolder}/config/preprocessing/reshape/00.json",
                 "--pool_config_path",
-                "${workspaceFolder}/config/feature_engineering/pool/03.json",
+                "${workspaceFolder}/config/feature_engineering/pool/02.json",
+                "--svc_config_path",
+                "${workspaceFolder}/config/train/alg/svc/00.json",
                 "--loader_config_path",
                 "${workspaceFolder}/config/train/loader/t480s.json",
                 "--skm_root_path",
-                "${workspaceFolder}/model/spec_00_reshape_00_skm_00/skm",
+                "${workspaceFolder}/model/baseline/base/spec_00_reshape_00_skm_00/skm",
                 "--export_path",
-                "${workspaceFolder}/model/spec_00_reshape_00_skm_00/svm/pool_03",
+                "${workspaceFolder}/model/baseline/base/spec_00_reshape_00_skm_00/svm/pool_02",
             ]
         }
     ]
