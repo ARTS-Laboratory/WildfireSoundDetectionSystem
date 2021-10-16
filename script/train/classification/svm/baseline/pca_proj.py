@@ -14,7 +14,7 @@ import script.train.common as script_common
 import script.train.skl_loader.skm as skl_skm_laoder
 from audio_classifier.train.data.dataset.composite import KFoldDatasetGenerator
 from script.train.classification.svm import train_common
-from script.train.classification.svm.baseline import train_baseline, train_pca_proj
+from script.train.classification.svm.baseline import train_pca_proj
 from sklearn.svm import SVC
 from sklearn_plugins.cluster.spherical_kmeans import SphericalKMeans
 
@@ -23,7 +23,7 @@ CollateFuncType = script_common.CollateFuncType
 
 
 def main(args: List[str]):
-    argv: Namespace = train_baseline.parse_args(args)
+    argv: Namespace = train_pca_proj.parse_args(args)
     skm_root_path: str = argv.skm_root_path
     val_fold_path_stub: str = "val_{:02d}"
     class_skm_path_stub: str = "class_{:02d}/model.pkl"
