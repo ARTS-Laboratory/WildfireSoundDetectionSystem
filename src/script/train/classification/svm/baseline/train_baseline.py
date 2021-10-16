@@ -69,24 +69,3 @@ def get_config(argv: Namespace):
     pool_config: conf_pool.PoolConfig = conf_pool.get_pool_config_from_json(
         POOL_CONFIG_PATH)
     return dataset_config, mel_spec_config, reshape_config, pool_config, svc_config, loader_config
-
-
-def get_collate_func(
-    skms: Sequence[SphericalKMeans],
-    mel_spec_config: conf_spec.MelSpecConfig,
-    reshape_config: conf_reshape.ReshapeConfig,
-    pool_config: conf_pool.PoolConfig,
-    pool_func: Callable[[np.ndarray], np.ndarray] = feature_pool.MeanStdPool()
-) -> CollateFuncType:
-    collate_func: CollateFuncType = collate_base.EnsembleCollateFunction(
-        collate_funcs=[
-            partial(collate_transform.mel_spectrogram_collate,
-                    config=mel_spec_config),
-            partial(collate_reshape.slice_flatten_collate,
-                    config=reshape_config),
-            partial(collate_skm.skm_skl_proj_collate, skms=skms),
-            partial(collate_pool.pool_collate,
-                    pool_func=pool_func,
-                    pool_config=pool_config)
-        ])
-    return collate_func
