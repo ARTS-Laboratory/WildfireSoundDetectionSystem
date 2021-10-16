@@ -132,13 +132,13 @@
                 "--pool_config_path",
                 "${workspaceFolder}/config/feature_engineering/pool/02.json",
                 "--svc_config_path",
-                "${workspaceFolder}/config/train/alg/svc/00.json",
+                "${workspaceFolder}/config/train/alg/svc/02.json",
                 "--loader_config_path",
                 "${workspaceFolder}/config/train/loader/t480s.json",
                 "--skm_root_path",
                 "${workspaceFolder}/model/baseline/base/spec_00_reshape_00_skm_00/skm",
                 "--export_path",
-                "${workspaceFolder}/model/baseline/base/spec_00_reshape_00_skm_00/svm/pool_02_svc_00",
+                "${workspaceFolder}/model/baseline/base/spec_00_reshape_00_skm_00/svm/pool_02_svc_02",
             ]
         }
     ]
