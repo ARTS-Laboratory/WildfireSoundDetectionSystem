@@ -1,5 +1,5 @@
 {
-    "nu" : 0.5,
+    "C" : 0.5,
     "kernel": "rbf",
     "gamma":"scale"
 }
