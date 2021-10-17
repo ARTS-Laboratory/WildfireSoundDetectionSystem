@@ -20,52 +20,6 @@ MetaDataType = script_common.MetaDataType
 CollateFuncType = script_common.CollateFuncType
 
 
-def get_argparse() -> ArgumentParser:
-    parser = ArgumentParser(parents=[
-        conf_dataset.DatasetConfigArgumentParser(),
-        conf_spec.SpecConfigArgumentParser(),
-        conf_reshape.ReshapeConfigArgumentParser(),
-        conf_alg.SKMArgumentParser(),
-        conf_loader.LoaderConfigArgumentParser()
-    ])
-    parser.add_argument("--export_path",
-                        type=str,
-                        required=True,
-                        help="the export path")
-    parser.add_argument("--k_min", type=int, required=True, help="minimum k")
-    parser.add_argument("--k_max", type=int, required=True, help="maximum k")
-    parser.add_argument("--k_step",
-                        type=int,
-                        required=True,
-                        help="k step size")
-    return parser
-
-
-def parse_args(args: List[str]) -> Namespace:
-    parser = get_argparse()
-    argv = parser.parse_args(args)
-    return argv
-
-
-def get_config(argv: Namespace):
-    DATASET_CONFIG_PATH: str = argv.dataset_config_path
-    SPEC_CONFIG_PATH: str = argv.spec_config_path
-    RESHAPE_CONFIG_PATH: str = argv.reshape_config_path
-    SKM_CONFIG_PATH: str = argv.skm_config_path
-    LOADER_CONFIG_PATH: str = argv.loader_config_path
-    dataset_config: conf_dataset.PreSplitFoldDatasetConfig = conf_dataset.get_dataset_config_from_json(
-        DATASET_CONFIG_PATH, argv, conf_dataset.PreSplitFoldDatasetConfig)
-    mel_spec_config: conf_spec.MelSpecConfig = conf_spec.get_spec_config_from_json(
-        SPEC_CONFIG_PATH, conf_spec.MelSpecConfig)
-    reshape_config: conf_reshape.ReshapeConfig = conf_reshape.get_reshape_config_from_json(
-        RESHAPE_CONFIG_PATH)
-    skm_config: conf_alg.SKMConfig = conf_alg.get_alg_config_from_json(
-        SKM_CONFIG_PATH, conf_alg.SKMConfig)
-    loader_config: conf_loader.LoaderConfig = conf_loader.get_loader_config_from_json(
-        LOADER_CONFIG_PATH)
-    return dataset_config, mel_spec_config, reshape_config, skm_config, loader_config
-
-
 def main(args: List[str]):
     argv: Namespace = parse_args(args)
     export_path: str = argv.export_path
@@ -129,6 +83,52 @@ def main(args: List[str]):
                                        slices=curr_slices,
                                        skm=skm,
                                        k_value=k_value)
+
+
+def get_argparse() -> ArgumentParser:
+    parser = ArgumentParser(parents=[
+        conf_dataset.DatasetConfigArgumentParser(),
+        conf_spec.SpecConfigArgumentParser(),
+        conf_reshape.ReshapeConfigArgumentParser(),
+        conf_alg.SKMArgumentParser(),
+        conf_loader.LoaderConfigArgumentParser()
+    ])
+    parser.add_argument("--export_path",
+                        type=str,
+                        required=True,
+                        help="the export path")
+    parser.add_argument("--k_min", type=int, required=True, help="minimum k")
+    parser.add_argument("--k_max", type=int, required=True, help="maximum k")
+    parser.add_argument("--k_step",
+                        type=int,
+                        required=True,
+                        help="k step size")
+    return parser
+
+
+def parse_args(args: List[str]) -> Namespace:
+    parser = get_argparse()
+    argv = parser.parse_args(args)
+    return argv
+
+
+def get_config(argv: Namespace):
+    DATASET_CONFIG_PATH: str = argv.dataset_config_path
+    SPEC_CONFIG_PATH: str = argv.spec_config_path
+    RESHAPE_CONFIG_PATH: str = argv.reshape_config_path
+    SKM_CONFIG_PATH: str = argv.skm_config_path
+    LOADER_CONFIG_PATH: str = argv.loader_config_path
+    dataset_config: conf_dataset.PreSplitFoldDatasetConfig = conf_dataset.get_dataset_config_from_json(
+        DATASET_CONFIG_PATH, argv, conf_dataset.PreSplitFoldDatasetConfig)
+    mel_spec_config: conf_spec.MelSpecConfig = conf_spec.get_spec_config_from_json(
+        SPEC_CONFIG_PATH, conf_spec.MelSpecConfig)
+    reshape_config: conf_reshape.ReshapeConfig = conf_reshape.get_reshape_config_from_json(
+        RESHAPE_CONFIG_PATH)
+    skm_config: conf_alg.SKMConfig = conf_alg.get_alg_config_from_json(
+        SKM_CONFIG_PATH, conf_alg.SKMConfig)
+    loader_config: conf_loader.LoaderConfig = conf_loader.get_loader_config_from_json(
+        LOADER_CONFIG_PATH)
+    return dataset_config, mel_spec_config, reshape_config, skm_config, loader_config
 
 
 if __name__ == "__main__":
