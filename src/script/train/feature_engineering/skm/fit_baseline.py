@@ -1,7 +1,6 @@
 from collections import deque
 from dataclasses import dataclass, field
-from os import path
-from typing import List, MutableSequence, Sequence, Tuple
+from typing import MutableSequence, Sequence, Tuple
 
 import audio_classifier.train.config.loader as conf_loader
 import audio_classifier.train.data.dataset.composite as dataset_composite
