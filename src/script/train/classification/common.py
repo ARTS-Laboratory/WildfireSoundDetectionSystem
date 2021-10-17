@@ -49,10 +49,10 @@ def generate_proj_dataset(
 
 def report_slices_acc(classifier: Union[ClassifierMixin, Pipeline],
                       train: ProjDataset, val: ProjDataset):
-    train_slices, train_labels = create_slices_set(train.all_file_spec_projs,
-                                                   train.labels)
-    val_slices, val_labels = create_slices_set(val.all_file_spec_projs,
-                                               val.labels)
+    train_slices, train_labels = convert_to_ndarray(train.all_file_spec_projs,
+                                                    train.labels)
+    val_slices, val_labels = convert_to_ndarray(val.all_file_spec_projs,
+                                                val.labels)
     report_slices_acc_np(classifier=classifier,
                          train_slices=train_slices,
                          train_labels=train_labels,
@@ -69,8 +69,8 @@ def report_slices_acc_np(classifier: Union[ClassifierMixin, Pipeline],
     print(info_str)
 
 
-def create_slices_set(all_file_spec_projs: Sequence[Sequence[np.ndarray]],
-                      labels: Sequence[int]):
+def convert_to_ndarray(all_file_spec_projs: Sequence[Sequence[np.ndarray]],
+                       labels: Sequence[int]) -> Tuple[np.ndarray, np.ndarray]:
     train_slices_list: Sequence[np.ndarray] = deque()
     train_labels_list: Sequence[int] = deque()
     for spec_projs, label in zip(all_file_spec_projs, labels):

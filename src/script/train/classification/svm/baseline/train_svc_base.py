@@ -72,7 +72,7 @@ def train_svc(curr_val_fold: int,
               svc_config: conf_alg.SVCConfig,
               export_path: str,
               model_path_stub: str = "val_{:02d}.pkl") -> SVC:
-    train_slices, train_labels = classify_common.create_slices_set(
+    train_slices, train_labels = classify_common.convert_to_ndarray(
         all_file_spec_projs=dataset.all_file_spec_projs, labels=dataset.labels)
     svc: SVC = train_svc_np(curr_val_fold=curr_val_fold,
                             train_slices=train_slices,
