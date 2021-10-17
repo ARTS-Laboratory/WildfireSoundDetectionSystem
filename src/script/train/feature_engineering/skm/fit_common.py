@@ -88,6 +88,7 @@ def try_k_elbow(curr_class_path: str,
                                   str.format(filename_sub, METRIC))
     figure.savefig(fname=fig_filename, dpi=300)
     plt.close(fig=figure)
+    # TODO return k_times_ and k_scores_
     return visualizer.elbow_value_
 
 
@@ -153,7 +154,7 @@ def plot_centroids(curr_plot_path: str,
     """Plot centorids
 
     Args:
-        curr_model_path (str): the path to the directory where all the plot are saved
+        curr_plot_path (str): the path to the directory where all the plot are saved
         skm (SphericalKMeans): A trained SphericalKMeans instance
         spec_config (conf_spec.MelSpecConfig): spectrogram configuration
         reshape_config (conf_reshape.ReshapeConfig): reshape configuration
@@ -210,6 +211,15 @@ def plot_silhouette(curr_plot_path: str,
                     skm: SphericalKMeans,
                     k_value: int,
                     filename_stub: str = "silhouette_k_{}.png"):
+    """Plot Silhouette score for a skm.
+
+    Args:
+        curr_plot_path (str): the path to the directory where all the plot are saved
+        slices (np.ndarray): The slices used to fit the skm.
+        skm (SphericalKMeans): The fitted skm, assumed previously fitted.
+        k_value (int): The k value of the skm.
+        filename_stub (str, optional): The filename stub of the plot. Defaults to "silhouette_k_{}.png".
+    """
     figure, axes = plt.subplots()
     visualizer = SphericalSilhouetteVisualizer(estimator=skm,
                                                ax=axes,
