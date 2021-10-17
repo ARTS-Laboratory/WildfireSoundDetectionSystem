@@ -10,12 +10,12 @@ import audio_classifier.train.collate.feature_engineering.pool as collate_pool
 import audio_classifier.train.collate.feature_engineering.skm as collate_skm
 import audio_classifier.train.collate.preprocessing.spectrogram.reshape as collate_reshape
 import audio_classifier.train.collate.preprocessing.spectrogram.transform as collate_transform
+import script.train.classification.common as classify_common
 import script.train.common as script_common
 import script.train.skl_loader.skm as skl_skm_laoder
 from audio_classifier.train.data.dataset.composite import KFoldDatasetGenerator
-from script.train.classification.svm import train_common
-from script.train.classification.svm.baseline import train_baseline
-from sklearn.svm import SVC
+from script.train.classification.svm.baseline import train_pca_svc
+from sklearn.pipeline import Pipeline
 from sklearn_plugins.cluster.spherical_kmeans import SphericalKMeans
 
 MetaDataType = script_common.MetaDataType
@@ -23,13 +23,13 @@ CollateFuncType = script_common.CollateFuncType
 
 
 def main(args: List[str]):
-    argv: Namespace = train_baseline.parse_args(args)
+    argv: Namespace = train_pca_svc.parse_args(args)
     skm_root_path: str = argv.skm_root_path
     val_fold_path_stub: str = "val_{:02d}"
     class_skm_path_stub: str = "class_{:02d}/model.pkl"
     export_path: str = argv.export_path
     os.makedirs(export_path, exist_ok=True)
-    dataset_config, mel_spec_config, reshape_config, pool_config, svc_config, loader_config = train_baseline.get_config(
+    dataset_config, mel_spec_config, reshape_config, pool_config, pca_config, svc_config, loader_config = train_pca_svc.get_config(
         argv=argv)
     metadata: MetaDataType = script_common.get_metadata(dataset_config)
     dataset_generator: KFoldDatasetGenerator = script_common.get_dataset_generator(
@@ -56,16 +56,20 @@ def main(args: List[str]):
                         pool_func=feature_pool.MeanStdPool(),
                         pool_config=pool_config)
             ])
-        train, val = train_common.generate_proj_dataset(
+        train, val = classify_common.generate_proj_dataset(
             curr_val_fold=curr_val_fold,
             dataset_generator=dataset_generator,
             collate_function=collate_func,
             loader_config=loader_config)
-        svc: SVC = train_common.train_svc(curr_val_fold=curr_val_fold,
-                                          dataset=train,
-                                          svc_config=svc_config,
-                                          export_path=export_path)
-        train_common.report_slices_acc(svc=svc, train=train, val=val)
+        pca_svc: Pipeline = train_pca_svc.train_pca_svc(
+            curr_val_fold=curr_val_fold,
+            dataset=train,
+            pca_config=pca_config,
+            svc_config=svc_config,
+            export_path=export_path)
+        classify_common.report_slices_acc(classifier=pca_svc,
+                                          train=train,
+                                          val=val)
 
 
 if __name__ == "__main__":

@@ -1,15 +1,13 @@
-import pickle
 from collections import deque
 from dataclasses import dataclass, field
-from os import path
-from typing import Sequence, Tuple
+from typing import Sequence, Tuple, Union
 
 import audio_classifier.train.config.loader as conf_loader
 import audio_classifier.train.data.dataset.composite as dataset_composite
 import numpy as np
 import script.train.common as script_common
-from audio_classifier.train.config.alg import SVCConfig
-from sklearn.svm import SVC
+from sklearn.base import ClassifierMixin
+from sklearn.pipeline import Pipeline
 
 MetaDataType = script_common.MetaDataType
 CollateFuncType = script_common.CollateFuncType
@@ -49,64 +47,30 @@ def generate_proj_dataset(
     return ret_datasets[0], ret_datasets[1]
 
 
-def train_svc(curr_val_fold: int,
-              dataset: ProjDataset,
-              svc_config: SVCConfig,
-              export_path: str,
-              model_path_stub: str = "val_{:02d}.pkl") -> SVC:
-    train_slices, train_labels = _create_slices_set(
-        all_file_spec_projs=dataset.all_file_spec_projs, labels=dataset.labels)
-    svc: SVC = train_svc_np(curr_val_fold=curr_val_fold,
-                            train_slices=train_slices,
-                            train_labels=train_labels,
-                            svc_config=svc_config,
-                            export_path=export_path,
-                            model_path_stub=model_path_stub)
-    return svc
-
-
-def train_svc_np(curr_val_fold: int,
-                 train_slices: np.ndarray,
-                 train_labels: np.ndarray,
-                 svc_config: SVCConfig,
-                 export_path: str,
-                 model_path_stub: str = "val_{:02d}.pkl") -> SVC:
-    curr_val_svc_path = path.join(export_path,
-                                  str.format(model_path_stub, curr_val_fold))
-    svc = SVC(C=svc_config.C,
-              kernel=svc_config.kernel,
-              degree=svc_config.degree,
-              gamma=svc_config.gamma,
-              coef0=svc_config.coef0)
-    svc.fit(train_slices, train_labels)
-    with open(curr_val_svc_path, "wb") as svc_file:
-        pickle.dump(svc, svc_file)
-    return svc
-
-
-def report_slices_acc(svc: SVC, train: ProjDataset, val: ProjDataset):
-    train_slices, train_labels = _create_slices_set(train.all_file_spec_projs,
-                                                    train.labels)
-    val_slices, val_labels = _create_slices_set(val.all_file_spec_projs,
-                                                val.labels)
-    report_slices_acc_np(svc=svc,
+def report_slices_acc(classifier: Union[ClassifierMixin, Pipeline],
+                      train: ProjDataset, val: ProjDataset):
+    train_slices, train_labels = create_slices_set(train.all_file_spec_projs,
+                                                   train.labels)
+    val_slices, val_labels = create_slices_set(val.all_file_spec_projs,
+                                               val.labels)
+    report_slices_acc_np(classifier=classifier,
                          train_slices=train_slices,
                          train_labels=train_labels,
                          val_slices=val_slices,
                          val_labels=val_labels)
 
 
-def report_slices_acc_np(svc: SVC, train_slices: np.ndarray,
-                         train_labels: np.ndarray, val_slices: np.ndarray,
-                         val_labels: np.ndarray):
-    train_acc: float = svc.score(train_slices, train_labels)
-    val_acc: float = svc.score(val_slices, val_labels)
+def report_slices_acc_np(classifier: Union[ClassifierMixin, Pipeline],
+                         train_slices: np.ndarray, train_labels: np.ndarray,
+                         val_slices: np.ndarray, val_labels: np.ndarray):
+    train_acc: float = classifier.score(train_slices, train_labels)
+    val_acc: float = classifier.score(val_slices, val_labels)
     info_str: str = str.format("train: {:.5f} val: {:.5f}", train_acc, val_acc)
     print(info_str)
 
 
-def _create_slices_set(all_file_spec_projs: Sequence[Sequence[np.ndarray]],
-                       labels: Sequence[int]):
+def create_slices_set(all_file_spec_projs: Sequence[Sequence[np.ndarray]],
+                      labels: Sequence[int]):
     train_slices_list: Sequence[np.ndarray] = deque()
     train_labels_list: Sequence[int] = deque()
     for spec_projs, label in zip(all_file_spec_projs, labels):
