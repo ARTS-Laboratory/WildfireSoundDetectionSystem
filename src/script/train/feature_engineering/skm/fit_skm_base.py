@@ -2,7 +2,7 @@ import os
 import pickle
 import traceback
 from os import path
-from typing import Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 import audio_classifier.config.preprocessing.reshape as conf_reshape
 import audio_classifier.config.preprocessing.spec as conf_spec
@@ -51,7 +51,7 @@ def try_k_elbow(curr_class_path: str,
                 slices: np.ndarray,
                 skm_config: conf_alg.SKMConfig,
                 k_range: range,
-                filename_sub: str = "elbow_{}.png") -> Union[int, None]:
+                metric_filename_stub: str = "elbow_{}") -> Union[int, None]:
     """Search for optimal k value.
 
     Args:
@@ -59,7 +59,7 @@ def try_k_elbow(curr_class_path: str,
         slices (np.ndarray): (n_slices, n_sample_freq * slice_size). Class conditioned feature vectors dataset.
         feature_vector_config (FeatureVectorConfig): feature vector configuration instance.
         k_test_range (range): range object used to generate k value to be tested
-        filename_stub (str): the filename stub for the plot, must include a placeholder for current k value. Defaults to "elbow_{}.png".
+        metric_filename_stub (str): the filename stub for the plot and metrics, must include a placeholder for current k value. Defaults to "elbow_{}".
 
     Returns:
         optimal_k (int): optimal k value found by the algorihtm
@@ -82,13 +82,23 @@ def try_k_elbow(curr_class_path: str,
     except np.linalg.LinAlgError:
         traceback.print_exc()
         return None
+    # plot elbow
     visualizer.fit(slices)
     visualizer.finalize()
-    fig_filename: str = path.join(curr_class_path,
-                                  str.format(filename_sub, METRIC))
-    figure.savefig(fname=fig_filename, dpi=300)
+    plot_path: str = path.join(
+        curr_class_path, str.format(metric_filename_stub + ".png", METRIC))
+    figure.savefig(fname=plot_path, dpi=300)
     plt.close(fig=figure)
-    # TODO return k_times_ and k_scores_
+    # serialize data used for plotting
+    metric_path: str = path.join(
+        curr_class_path, str.format(metric_filename_stub + ".pkl", METRIC))
+    with open(metric_path, mode="wb") as metric_file:
+        metrics: Tuple[Optional[int], List[int], List[float],
+                       List[float]] = (visualizer.elbow_value_,
+                                       visualizer.k_values_,
+                                       visualizer.k_timers_,
+                                       visualizer.k_scores_)
+        pickle.dump(metrics, metric_file)
     return visualizer.elbow_value_
 
 
@@ -210,7 +220,7 @@ def plot_silhouette(curr_plot_path: str,
                     slices: np.ndarray,
                     skm: SphericalKMeans,
                     k_value: int,
-                    filename_stub: str = "silhouette_k_{}.png"):
+                    metric_filename_stub: str = "silhouette_k_{}"):
     """Plot Silhouette score for a skm.
 
     Args:
@@ -218,7 +228,7 @@ def plot_silhouette(curr_plot_path: str,
         slices (np.ndarray): The slices used to fit the skm.
         skm (SphericalKMeans): The fitted skm, assumed previously fitted.
         k_value (int): The k value of the skm.
-        filename_stub (str, optional): The filename stub of the plot. Defaults to "silhouette_k_{}.png".
+        metric_filename_stub (str, optional): The filename stub of the plot. Defaults to "silhouette_k_{}".
     """
     figure, axes = plt.subplots()
     visualizer = SphericalSilhouetteVisualizer(estimator=skm,
@@ -226,7 +236,8 @@ def plot_silhouette(curr_plot_path: str,
                                                is_fitted=True)
     visualizer.fit(slices)
     visualizer.finalize()
-    fig_path: str = path.join(curr_plot_path,
-                              str.format(filename_stub, k_value))
+    fig_path: str = path.join(
+        curr_plot_path, str.format(metric_filename_stub + ".png", k_value))
     figure.savefig(fname=fig_path, dpi=300)
     plt.close(fig=figure)
+    # TODO serialize silhouette score
