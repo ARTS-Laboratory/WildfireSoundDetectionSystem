@@ -23,6 +23,16 @@ CollateFuncType = script_common.CollateFuncType
 
 def get_curr_class_slices(curr_class: int, slices: np.ndarray,
                           labels: np.ndarray) -> np.ndarray:
+    """Get current class slices.
+
+    Args:
+        curr_class (int): The current class label.
+        slices (np.ndarray): (n_slices, n_dims) All the slices in the dataset.
+        labels (np.ndarray): (n_slices, ) All the class labels.
+
+    Returns:
+        curr_class_slices (np.ndarray): (n_slices_curr_class, ) Slices of current class.
+    """
     curr_indices: np.ndarray = np.argwhere(labels == curr_class).flatten()
     curr_slices: np.ndarray = slices[curr_indices, :]
     return curr_slices
@@ -33,12 +43,12 @@ def get_curr_class_path(export_path: str, curr_val_fold: int,
     """Get and create curr_class_path
 
     Args:
-        export_path (str): [description]
-        curr_val_fold (int): [description]
-        curr_class (int): [description]
+        export_path (str): The path to current class folder.
+        curr_val_fold (int): The current validation fold number.
+        curr_class (int): The current number.
 
     Returns:
-        str: [description]
+        str: The path to current class path.
     """
     curr_class_path: str = path.join(export_path,
                                      str.format("val_{:02d}", curr_val_fold),
