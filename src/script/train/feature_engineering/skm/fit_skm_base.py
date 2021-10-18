@@ -31,7 +31,7 @@ def get_curr_class_slices(curr_class: int, slices: np.ndarray,
         labels (np.ndarray): (n_slices, ) All the class labels.
 
     Returns:
-        curr_class_slices (np.ndarray): (n_slices_curr_class, ) Slices of current class.
+        curr_class_slices (np.ndarray): (n_slices_curr_class, n_dims) Slices of current class.
     """
     curr_indices: np.ndarray = np.argwhere(labels == curr_class).flatten()
     curr_slices: np.ndarray = slices[curr_indices, :]
