@@ -15,7 +15,7 @@
             "name": "fit_skm_baseline_base",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/script/train/feature_engineering/skm/fit/base.py",
+            "program": "${workspaceFolder}/script/train/feature_engineering/skm/fit_base.py",
             "console": "integratedTerminal",
             "justMyCode": false,
             "args": [
@@ -34,7 +34,7 @@
                 "--loader_config_path",
                 "${workspaceFolder}/config/train/loader/t480s.json",
                 "--export_path",
-                "${workspaceFolder}/model/baseline/base/spec_00_reshape_00_skm_00/skm",
+                "${workspaceFolder}/model/spec_00_reshape_00_skm_00/skm",
                 "--k_min",
                 "5",
                 "--k_max",
@@ -47,7 +47,7 @@
             "name": "fit_skm_baseline_contrast",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/script/train/feature_engineering/skm/fit/contrast.py",
+            "program": "${workspaceFolder}/script/train/feature_engineering/skm/fit_contrast.py",
             "console": "integratedTerminal",
             "justMyCode": false,
             "args": [
@@ -68,7 +68,7 @@
                 "--loader_config_path",
                 "${workspaceFolder}/config/train/loader/t480s.json",
                 "--export_path",
-                "${workspaceFolder}/model/arch_01/spec_00_reshape_00_skm_00/skm",
+                "${workspaceFolder}/model/spec_00_reshape_00_skm_00/skm",
                 "--k_min",
                 "5",
                 "--k_max",
@@ -81,7 +81,7 @@
             "name": "train_svm_baseline_base",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/script/train/classification/svm/baseline/base.py",
+            "program": "${workspaceFolder}/script/train/classification/svm/train_svc_base.py",
             "console": "integratedTerminal",
             "justMyCode": false,
             "args": [
@@ -102,16 +102,16 @@
                 "--loader_config_path",
                 "${workspaceFolder}/config/train/loader/t480s.json",
                 "--skm_root_path",
-                "${workspaceFolder}/model/baseline/base/spec_00_reshape_00_skm_00/skm",
+                "${workspaceFolder}/model/spec_00_reshape_00_skm_00/skm",
                 "--export_path",
-                "${workspaceFolder}/model/baseline/base/spec_00_reshape_00_skm_00/svm/pool_02_svc_02",
+                "${workspaceFolder}/model/spec_00_reshape_00_skm_00/svm/pool_02_svc_02",
             ]
         },
         {
             "name": "train_svm_baseline_pca_proj",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/script/train/classification/svm/baseline/pca_proj.py",
+            "program": "${workspaceFolder}/script/train/classification/svm/train_pca_svc.py",
             "console": "integratedTerminal",
             "justMyCode": false,
             "args": [
@@ -134,9 +134,9 @@
                 "--loader_config_path",
                 "${workspaceFolder}/config/train/loader/t480s.json",
                 "--skm_root_path",
-                "${workspaceFolder}/model/baseline/base/spec_00_reshape_00_skm_00/skm",
+                "${workspaceFolder}/model/spec_00_reshape_00_skm_00/skm",
                 "--export_path",
-                "${workspaceFolder}/model/baseline/base/spec_00_reshape_00_skm_00/svm/pool_02_pca_00_svc_04",
+                "${workspaceFolder}/model/spec_00_reshape_00_skm_00/svm/pool_02_pca_00_svc_04",
             ]
         }
 
