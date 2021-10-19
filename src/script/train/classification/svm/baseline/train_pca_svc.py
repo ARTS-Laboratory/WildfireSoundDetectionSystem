@@ -108,8 +108,8 @@ def train_pca_svc_np(curr_val_fold: int,
               degree=svc_config.degree,
               gamma=svc_config.gamma,
               coef0=svc_config.coef0)
-    pca_svc = Pipeline(steps=[("pca", pca), ("svc", pca)])
+    pca_svc = Pipeline(steps=[("pca", pca), ("svc", svc)])
     pca_svc.fit(train_slices, train_labels)
     with open(curr_val_model_path, "wb") as pipeline_file:
-        pickle.dump(svc, pipeline_file)
+        pickle.dump(pca_svc, pipeline_file)
     return pca_svc
