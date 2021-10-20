@@ -1,6 +1,5 @@
 from collections import deque
-from typing import Any, Callable, Deque, List, Sequence, MutableSequence, Tuple, Union
-import gc
+from typing import Any, Callable, List, MutableSequence, Sequence, Tuple, Union
 
 
 def identity_collate_function(
