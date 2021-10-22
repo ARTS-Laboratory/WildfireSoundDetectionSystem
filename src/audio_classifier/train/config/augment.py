@@ -1,5 +1,5 @@
 from abc import ABC
-from argparse import ArgumentParser, HelpFormatter, Namespace
+from argparse import ArgumentParser, HelpFormatter
 from dataclasses import dataclass, field
 from typing import Tuple, Type, TypeVar
 
@@ -16,9 +16,6 @@ from overrides import overrides
            frozen=False)
 class AugmentConfigBase(ABC):
     def __post_init__(self):
-        pass
-
-    def _post_process(self, argv: Namespace):
         pass
 
 
@@ -45,7 +42,7 @@ AugmentConfigType = TypeVar("AugmentConfigType", AugmentConfigBase,
 
 
 def get_augment_config_from_json(
-        config_file_path: str, argv: Namespace,
+        config_file_path: str,
         ConfigType: Type[AugmentConfigType]) -> "ConfigType":
     """Get AugmentConfigBase from a json file.
 
@@ -64,7 +61,6 @@ def get_augment_config_from_json(
             config = ConfigType.from_json(config_file.read())
     except Exception as e:
         raise e
-    config._post_process(argv)
     return config
 
 
