@@ -32,7 +32,7 @@ class AugmentConfigBase(ABC):
 class SoundWaveAugmentConfig(AugmentConfigBase):
 
     snr_range: Tuple[float, float] = field(default_factory=lambda: (15, 30))
-    augment_ratio: float = field(default=0.5)
+    augment_ratio: float = field(default=0.5)  # ratio being augmented
 
     @overrides
     def __post_init__(self):
