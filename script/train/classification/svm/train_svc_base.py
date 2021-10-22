@@ -14,7 +14,7 @@ import script.train.common as script_common
 import script.train.skl_loader.skm as skl_skm_laoder
 from audio_classifier.train.data.dataset.composite import KFoldDatasetGenerator
 from script.train.classification import common as classify_common
-from script.train.classification.svm.baseline import train_svc_base
+from script.train.classification.svm import train_svc_base
 from sklearn.svm import SVC
 from sklearn_plugins.cluster.spherical_kmeans import SphericalKMeans
 

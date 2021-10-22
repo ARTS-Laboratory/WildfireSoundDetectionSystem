@@ -12,7 +12,7 @@ import audio_classifier.train.config.loader as conf_loader
 import numpy as np
 from sklearn.svm import SVC
 
-from .... import common as train_common
+from ... import common as train_common
 from ... import common as classify_common
 
 MetaDataType = train_common.MetaDataType
