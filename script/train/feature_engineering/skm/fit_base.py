@@ -12,13 +12,13 @@ import audio_classifier.train.config.alg as conf_alg
 import audio_classifier.train.config.dataset as conf_dataset
 import audio_classifier.train.config.loader as conf_loader
 import numpy as np
-import script.train.common as script_common
-import script.train.feature_engineering.common as fe_common
 from audio_classifier.train.data.dataset.composite import KFoldDatasetGenerator
 from script.train.feature_engineering.skm import fit_skm_base
+from script.train import train_common
+from script.train.feature_engineering import feature_common
 
-MetaDataType = script_common.MetaDataType
-CollateFuncType = script_common.CollateFuncType
+MetaDataType = train_common.MetaDataType
+CollateFuncType = train_common.CollateFuncType
 
 
 def main(args: List[str]):
@@ -29,8 +29,8 @@ def main(args: List[str]):
     k_step: int = argv.k_step
     dataset_config, mel_spec_config, reshape_config, skm_config, loader_config = get_config(
         argv=argv)
-    metadata: MetaDataType = script_common.get_metadata(dataset_config)
-    dataset_generator: KFoldDatasetGenerator = script_common.get_dataset_generator(
+    metadata: MetaDataType = train_common.get_metadata(dataset_config)
+    dataset_generator: KFoldDatasetGenerator = train_common.get_dataset_generator(
         metadata=metadata,
         dataset_config=dataset_config,
         mel_spec_config=mel_spec_config)
@@ -42,12 +42,12 @@ def main(args: List[str]):
                     config=reshape_config)
         ])
     for curr_val_fold in range(dataset_config.k_folds):
-        train, _ = fe_common.generate_slice_dataset(
+        train, _ = feature_common.generate_slice_dataset(
             curr_val_fold=curr_val_fold,
             dataset_generator=dataset_generator,
             collate_function=collate_func,
             loader_config=loader_config)
-        slices, labels = fe_common.convert_to_ndarray(slice_dataset=train)
+        slices, labels = feature_common.convert_to_ndarray(slice_dataset=train)
         unique_labels: np.ndarray = np.unique(labels)
         for curr_label in unique_labels:
             curr_class_path: str = fit_skm_base.get_curr_class_path(

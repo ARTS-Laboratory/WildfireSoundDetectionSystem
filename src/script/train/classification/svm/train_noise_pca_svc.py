@@ -10,11 +10,11 @@ import audio_classifier.train.config.alg as conf_alg
 import audio_classifier.train.config.augment as conf_augment
 import audio_classifier.train.config.dataset as conf_dataset
 import audio_classifier.train.config.loader as conf_loader
-import numpy as np
-import script.train.common as script_common
 
-MetaDataType = script_common.MetaDataType
-CollateFuncType = script_common.CollateFuncType
+from ... import train_common
+
+MetaDataType = train_common.MetaDataType
+CollateFuncType = train_common.CollateFuncType
 
 
 def get_argparse() -> ArgumentParser:

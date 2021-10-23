@@ -5,12 +5,13 @@ from typing import Sequence, Tuple, Union
 import audio_classifier.train.config.loader as conf_loader
 import audio_classifier.train.data.dataset.composite as dataset_composite
 import numpy as np
-import script.train.common as script_common
 from sklearn.base import ClassifierMixin
 from sklearn.pipeline import Pipeline
 
-MetaDataType = script_common.MetaDataType
-CollateFuncType = script_common.CollateFuncType
+from .. import train_common
+
+MetaDataType = train_common.MetaDataType
+CollateFuncType = train_common.CollateFuncType
 
 
 @dataclass
@@ -40,7 +41,7 @@ def generate_proj_dataset(
         val_dataset (ProjDataset): Validation dataset.
     """
     np.seterr(divide="ignore")
-    ret_raw_datasets = script_common.generate_dataset(
+    ret_raw_datasets = train_common.generate_dataset(
         curr_val_fold=curr_val_fold,
         dataset_generator=dataset_generator,
         collate_function=collate_function,

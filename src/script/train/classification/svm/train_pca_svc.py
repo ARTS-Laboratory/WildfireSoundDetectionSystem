@@ -10,15 +10,15 @@ import audio_classifier.train.config.alg as conf_alg
 import audio_classifier.train.config.dataset as conf_dataset
 import audio_classifier.train.config.loader as conf_loader
 import numpy as np
-import script.train.common as script_common
 from sklearn.decomposition import PCA
 from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
 
-from ... import common as classify_common
+from ... import train_common
+from .. import classify_common
 
-MetaDataType = script_common.MetaDataType
-CollateFuncType = script_common.CollateFuncType
+MetaDataType = train_common.MetaDataType
+CollateFuncType = train_common.CollateFuncType
 
 
 def get_argparse() -> ArgumentParser:

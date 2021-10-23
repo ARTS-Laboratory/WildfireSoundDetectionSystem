@@ -10,15 +10,16 @@ import audio_classifier.train.config.alg as conf_alg
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-import script.train.common as script_common
 from sklearn_plugins.cluster.spherical_kmeans import SphericalKMeans
 from yellowbrick_plugins.cluster import (SphericalKElbowVisualizer,
                                          SphericalSilhouetteVisualizer)
 
+from ... import train_common
+
 matplotlib.use("agg", force=True)
 
-MetaDataType = script_common.MetaDataType
-CollateFuncType = script_common.CollateFuncType
+MetaDataType = train_common.MetaDataType
+CollateFuncType = train_common.CollateFuncType
 
 
 def get_curr_class_slices(curr_class: int, slices: np.ndarray,

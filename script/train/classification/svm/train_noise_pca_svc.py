@@ -5,23 +5,22 @@ from functools import partial
 from typing import List, Sequence
 
 import audio_classifier.common.feature_engineering.pool as feature_pool
+import audio_classifier.train.collate.augment.sound_wave as collate_augment_sound_wave
 import audio_classifier.train.collate.base as collate_base
 import audio_classifier.train.collate.feature_engineering.pool as collate_pool
 import audio_classifier.train.collate.feature_engineering.skm as collate_skm
 import audio_classifier.train.collate.preprocessing.spectrogram.reshape as collate_reshape
 import audio_classifier.train.collate.preprocessing.spectrogram.transform as collate_transform
-import audio_classifier.train.collate.augment.sound_wave as collate_augment_sound_wave
-import script.train.classification.common as classify_common
-import script.train.common as script_common
 import script.train.skl_loader.skm as skl_skm_laoder
 from audio_classifier.train.data.dataset.composite import KFoldDatasetGenerator
-from script.train.classification.svm import train_pca_svc
-from script.train.classification.svm import train_noise_pca_svc
+from script.train import train_common
+from script.train.classification import classify_common
+from script.train.classification.svm import train_noise_pca_svc, train_pca_svc
 from sklearn.pipeline import Pipeline
 from sklearn_plugins.cluster.spherical_kmeans import SphericalKMeans
 
-MetaDataType = script_common.MetaDataType
-CollateFuncType = script_common.CollateFuncType
+MetaDataType = train_common.MetaDataType
+CollateFuncType = train_common.CollateFuncType
 
 
 def main(args: List[str]):
@@ -33,8 +32,8 @@ def main(args: List[str]):
     os.makedirs(export_path, exist_ok=True)
     dataset_config, sound_wave_augment_config, mel_spec_config, reshape_config, pool_config, pca_config, svc_config, loader_config = train_noise_pca_svc.get_config(
         argv=argv)
-    metadata: MetaDataType = script_common.get_metadata(dataset_config)
-    dataset_generator: KFoldDatasetGenerator = script_common.get_dataset_generator(
+    metadata: MetaDataType = train_common.get_metadata(dataset_config)
+    dataset_generator: KFoldDatasetGenerator = train_common.get_dataset_generator(
         metadata=metadata,
         dataset_config=dataset_config,
         mel_spec_config=mel_spec_config)
