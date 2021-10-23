@@ -24,7 +24,7 @@ CollateFuncType = train_common.CollateFuncType
 
 
 def main(args: List[str]):
-    argv: Namespace = train_pca_svc.parse_args(args)
+    argv: Namespace = train_noise_pca_svc.parse_args(args)
     skm_root_path: str = argv.skm_root_path
     val_fold_path_stub: str = "val_{:02d}"
     class_skm_path_stub: str = "class_{:02d}/model.pkl"
