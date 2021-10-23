@@ -17,7 +17,6 @@ def add_white_noise(sound_wave: np.ndarray, snr: float) -> np.ndarray:
     """
     rms_sound_sq: float = np.mean(sound_wave**2)
     rms_noise: float = np.sqrt(rms_sound_sq / np.power(10, snr / 10))
-    print(rms_noise)
     noise_rv: rv_continuous = norm(0, rms_noise)
     noise: np.ndarray = noise_rv.rvs(size=sound_wave.shape)
     sound_wave_noise: np.ndarray = sound_wave + noise
