@@ -138,6 +138,40 @@
                 "--export_path",
                 "${workspaceFolder}/model/spec_00_reshape_00_skm_00/svm/pool_02_pca_00_svc_04",
             ]
+        },
+        {
+            "name": "train_svm_noise_pca_proj",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/script/train/classification/svm/train_noise_pca_svc.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--dataset_root_path",
+                "${workspaceFolder}/data/BinaryFireSound/dataset/audio_44khz/audio",
+                "--metadata_path",
+                "${workspaceFolder}/data/BinaryFireSound/dataset/audio_44khz/metadata/metadata.csv",
+                "--dataset_config_path",
+                "${workspaceFolder}/config/train/dataset/pre_split_dataset.json",
+                "--sound_wave_augment_config_path",
+                "${workspaceFolder}/config/train/augment/sound_wave/00.json",
+                "--spec_config_path",
+                "${workspaceFolder}/config/preprocessing/spec/00.json",
+                "--reshape_config_path",
+                "${workspaceFolder}/config/preprocessing/reshape/00.json",
+                "--pool_config_path",
+                "${workspaceFolder}/config/feature_engineering/pool/02.json",
+                "--pca_config_path",
+                "${workspaceFolder}/config/train/alg/pca/00.json",
+                "--svc_config_path",
+                "${workspaceFolder}/config/train/alg/svc/04.json",
+                "--loader_config_path",
+                "${workspaceFolder}/config/train/loader/t480s.json",
+                "--skm_root_path",
+                "${workspaceFolder}/model/spec_00_reshape_00_skm_00/skm",
+                "--export_path",
+                "${workspaceFolder}/model/spec_00_reshape_00_skm_00/svm/noise_pool_02_pca_00_svc_04",
+            ]
         }
 
     ]
