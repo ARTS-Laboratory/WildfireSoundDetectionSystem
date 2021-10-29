@@ -70,7 +70,7 @@ MLConfigType = TypeVar("MLConfigType", MLConfigBase, PCAConfig, SKMConfig,
 
 
 def get_alg_config_from_json(config_file_path: str,
-                             ConfigType: Type[MLConfigBase]) -> "ConfigType":
+                             ConfigType: Type[MLConfigBase]) -> "MLConfigType":
     """Get SpectrogramConfig from a json file.
 
     If exception encountered while reading the json file, default value will be assigned to SpectrogramConfig.
