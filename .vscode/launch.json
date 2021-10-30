@@ -172,7 +172,39 @@
                 "--export_path",
                 "${workspaceFolder}/model/spec_00_reshape_00_skm_00/svm/noise_pool_02_pca_00_svc_04",
             ]
+        },
+        {
+            "name": "snr_test",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/script/train/validate/skm_svc/snr_test.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--dataset_root_path",
+                "${workspaceFolder}/data/BinaryFireSound/dataset/audio_44khz/audio",
+                "--metadata_path",
+                "${workspaceFolder}/data/BinaryFireSound/dataset/audio_44khz/metadata/metadata.csv",
+                "--dataset_config_path",
+                "${workspaceFolder}/config/train/dataset/pre_split_dataset.json",
+                "--spec_config_path",
+                "${workspaceFolder}/config/preprocessing/spec/00.json",
+                "--reshape_config_path",
+                "${workspaceFolder}/config/preprocessing/reshape/00.json",
+                "--pool_config_path",
+                "${workspaceFolder}/config/feature_engineering/pool/02.json",
+                "--loader_config_path",
+                "${workspaceFolder}/config/train/loader/t480s.json",
+                "--skm_root_path",
+                "${workspaceFolder}/model/spec_00_reshape_00_skm_00/skm",
+                "--classifier_path",
+                "${workspaceFolder}/model/spec_00_reshape_00_skm_00/svm/noise_pool_02_pca_00_svc_04",
+                "--snr_range",
+                "5.0",
+                "50.0",
+                "--snr_step",
+                "5.0"
+            ]
         }
-
     ]
 }
