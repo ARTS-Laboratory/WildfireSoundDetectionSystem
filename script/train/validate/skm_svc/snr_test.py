@@ -66,7 +66,7 @@ def main(args: List[str]):
         snr_list = np.insert(snr_list, 0, 0.0)
         for snr in snr_list:
             print(str.format("curr_snr {}", snr))
-            augment_ratio: float = 1.0 if snr != -1 else 0.0
+            augment_ratio: float = 1.0 if snr == 0.0 else 0.0
             augment_conifg = conf_augment.SoundWaveAugmentConfig(
                 snr_range=(snr, snr), augment_ratio=augment_ratio)
             # generate collate function
