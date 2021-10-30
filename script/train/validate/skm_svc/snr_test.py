@@ -63,10 +63,10 @@ def main(args: List[str]):
         snr_list: np.ndarray = np.arange(argv.snr_range[0],
                                          argv.snr_range[1] + 1.0,
                                          argv.snr_step)
-        snr_list = np.insert(snr_list, 0, 0.0)
+        snr_list = np.insert(snr_list, 0, np.nan)
         for snr in snr_list:
             print(str.format("curr_snr {}", snr))
-            augment_ratio: float = 1.0 if snr == 0.0 else 0.0
+            augment_ratio: float = 1.0 if np.isnan(snr) == False else 0.0
             augment_conifg = conf_augment.SoundWaveAugmentConfig(
                 snr_range=(snr, snr), augment_ratio=augment_ratio)
             # generate collate function
