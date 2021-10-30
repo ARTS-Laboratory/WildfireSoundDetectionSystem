@@ -24,8 +24,9 @@ def add_white_noise_collate(
     ret_data: Deque[Tuple[str, np.ndarray, int]] = deque()
     for filename, sound_wave, label in data:
         if random.random() <= config.augment_ratio:
-            snr: float = random.uniform(config.snr_range[0],
-                                        config.snr_range[1])
+            snr: float = config.snr_range[0]
+            if config.snr_range[0] < config.snr_range[1]:
+                snr = random.uniform(config.snr_range[0], config.snr_range[1])
             sound_wave = aug_sound_wave.add_white_noise(sound_wave=sound_wave,
                                                         snr=snr)
         ret_data.append((filename, sound_wave, label))
