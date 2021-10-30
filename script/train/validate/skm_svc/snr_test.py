@@ -33,7 +33,8 @@ def main(args: List[str]):
     skm_root_path: str = argv.skm_root_path
     val_fold_path_stub: str = "val_{:02d}"
     class_skm_path_stub: str = "class_{:02d}/model.pkl"
-    classifier_path: str = argv.classifier_path
+    classifier_path_stub: str = os.path.join(argv.classifier_path,
+                                             val_fold_path_stub + ".pkl")
     # os.makedirs(export_path, exist_ok=True)
     dataset_config, mel_spec_config, reshape_config, pool_config, loader_config = snr_test.get_config(
         argv=argv)
@@ -53,6 +54,7 @@ def main(args: List[str]):
         skms: Sequence[SphericalKMeans] = skl_skm_laoder.load_skl_skms(
             curr_val_skm_path_stub=curr_val_skm_path_stub,
             n_classes=dataset_config.n_classes)
+        classifier_path: str = str.format(classifier_path_stub, curr_val_fold)
         classifier: Union[ClassifierMixin,
                           Pipeline] = skl_classifier_loader.load_classifier(
                               classifier_path=classifier_path)
