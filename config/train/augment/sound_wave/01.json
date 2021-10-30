@@ -1,0 +1,4 @@
+{
+    "snr_range": [15, 20],
+    "augment_ratio": 0.5
+}
