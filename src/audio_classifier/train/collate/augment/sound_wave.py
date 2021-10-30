@@ -23,6 +23,10 @@ def add_white_noise_collate(
     """
     ret_data: Deque[Tuple[str, np.ndarray, int]] = deque()
     for filename, sound_wave, label in data:
+        # configured to be no augment at all
+        if config.augment_ratio <= 0.0:
+            ret_data.append((filename, sound_wave, label))
+            continue
         if random.random() <= config.augment_ratio:
             snr: float = config.snr_range[0]
             if config.snr_range[0] < config.snr_range[1]:
