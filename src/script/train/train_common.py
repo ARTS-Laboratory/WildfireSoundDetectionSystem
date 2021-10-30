@@ -95,7 +95,7 @@ def _sub_dataset_generator(
         dataset_config: conf_dataset.PreSplitFoldDatasetConfig,
         spec_config: conf_spec.STFTSpecConfig,
         metadata: Optional[MetaDataType] = None) -> dataset_base.FolderDataset:
-    """The functor used to generate each sub dataset.
+    """The functor used to generate each sub dataset of a k fold dataset.
 
     Args:
         curr_fold (int): The current fold to be generated. Zero-indexed.
