@@ -154,7 +154,7 @@
                 "--dataset_config_path",
                 "${workspaceFolder}/config/train/dataset/pre_split_dataset.json",
                 "--sound_wave_augment_config_path",
-                "${workspaceFolder}/config/train/augment/sound_wave/00.json",
+                "${workspaceFolder}/config/train/augment/sound_wave/01.json",
                 "--spec_config_path",
                 "${workspaceFolder}/config/preprocessing/spec/00.json",
                 "--reshape_config_path",
@@ -170,7 +170,7 @@
                 "--skm_root_path",
                 "${workspaceFolder}/model/spec_00_reshape_00_skm_00/skm",
                 "--export_path",
-                "${workspaceFolder}/model/spec_00_reshape_00_skm_00/svm/noise_pool_02_pca_00_svc_04",
+                "${workspaceFolder}/model/spec_00_reshape_00_skm_00/svm/augment_01_pool_02_pca_00_svc_04",
             ]
         },
         {
@@ -198,12 +198,12 @@
                 "--skm_root_path",
                 "${workspaceFolder}/model/spec_00_reshape_00_skm_00/skm",
                 "--classifier_path",
-                "${workspaceFolder}/model/spec_00_reshape_00_skm_00/svm/noise_pool_02_pca_00_svc_04",
+                "${workspaceFolder}/model/spec_00_reshape_00_skm_00/svm/augment_01_pool_02_pca_00_svc_04",
                 "--snr_range",
+                "-5.0",
                 "5.0",
-                "50.0",
                 "--snr_step",
-                "5.0"
+                "0.5"
             ]
         }
     ]
