@@ -1,8 +1,9 @@
 import os
+import pickle
 import sys
 from argparse import Namespace
 from functools import partial
-from typing import List, Sequence, Union
+from typing import List, Sequence, Tuple, Union
 
 import numpy as np
 
@@ -35,6 +36,7 @@ def main(args: List[str]):
     class_skm_path_stub: str = "class_{:02d}/model.pkl"
     classifier_path_stub: str = os.path.join(argv.classifier_path,
                                              val_fold_path_stub + ".pkl")
+    metric_path: str = os.path.join(argv.classifier_path, "metric.pkl")
     # os.makedirs(export_path, exist_ok=True)
     dataset_config, mel_spec_config, reshape_config, pool_config, loader_config = snr_test.get_config(
         argv=argv)
@@ -43,6 +45,7 @@ def main(args: List[str]):
         metadata=metadata,
         dataset_config=dataset_config,
         mel_spec_config=mel_spec_config)
+    metrics: List[List[Tuple[float, float]]] = list()
     for curr_val_fold in range(dataset_config.k_folds):
         print(str.format("curr_val_fold {}", curr_val_fold))
         curr_val_skm_path_stub: str = skl_skm_laoder.get_curr_val_skm_path_stub(
@@ -64,8 +67,8 @@ def main(args: List[str]):
                                          argv.snr_range[1] + 1.0,
                                          argv.snr_step)
         snr_list = np.insert(snr_list, 0, np.nan)
+        curr_val_metric: List[Tuple[float, float]] = list()
         for snr in snr_list:
-            print(str.format("curr_snr {}", snr))
             augment_ratio: float = 1.0 if np.isnan(snr) == False else 0.0
             augment_conifg = conf_augment.SoundWaveAugmentConfig(
                 snr_range=(snr, snr), augment_ratio=augment_ratio)
@@ -89,7 +92,14 @@ def main(args: List[str]):
                 collate_function=collate_func,
                 loader_config=loader_config)
             train_acc, val_acc = classify_common.report_slices_acc(
-                classifier=classifier, train=train, val=val)
+                classifier=classifier, train=train, val=val, to_print=False)
+            print(
+                str.format("curr_snr {} train {} val {}", snr, train_acc,
+                           val_acc))
+            curr_val_metric.append((train_acc, val_acc))
+        metrics.append(curr_val_metric)
+    with open(metric_path, mode="wb") as metric_file:
+        pickle.dump(metrics, metric_file)
 
 
 if __name__ == "__main__":
