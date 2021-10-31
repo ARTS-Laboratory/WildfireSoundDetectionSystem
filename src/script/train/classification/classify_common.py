@@ -60,29 +60,35 @@ def generate_proj_dataset(
     return ret_datasets[0], ret_datasets[1]
 
 
-def report_slices_acc(classifier: Union[ClassifierMixin, Pipeline],
-                      train: ProjDataset, val: ProjDataset):
+def report_slices_acc(classifier: Union[ClassifierMixin,
+                                        Pipeline], train: ProjDataset,
+                      val: ProjDataset) -> Tuple[float, float]:
     """Return train and validation accuracy for the current classifier.
 
     Args:
         classifier (Union[ClassifierMixin, Pipeline]): The classifier to be evaluated.
         train (ProjDataset): Training proj dataset.
         val (ProjDataset): Validation proj dataset.
+
+    Return:
+        train_acc (float): The accuracy on training set.
+        val_acc (float): The accuracy on validation set.
     """
     train_slices, train_labels = convert_to_ndarray(train.all_file_spec_projs,
                                                     train.labels)
     val_slices, val_labels = convert_to_ndarray(val.all_file_spec_projs,
                                                 val.labels)
-    report_slices_acc_np(classifier=classifier,
-                         train_slices=train_slices,
-                         train_labels=train_labels,
-                         val_slices=val_slices,
-                         val_labels=val_labels)
+    return report_slices_acc_np(classifier=classifier,
+                                train_slices=train_slices,
+                                train_labels=train_labels,
+                                val_slices=val_slices,
+                                val_labels=val_labels)
 
 
-def report_slices_acc_np(classifier: Union[ClassifierMixin, Pipeline],
-                         train_slices: np.ndarray, train_labels: np.ndarray,
-                         val_slices: np.ndarray, val_labels: np.ndarray):
+def report_slices_acc_np(classifier: Union[ClassifierMixin,
+                                           Pipeline], train_slices: np.ndarray,
+                         train_labels: np.ndarray, val_slices: np.ndarray,
+                         val_labels: np.ndarray) -> Tuple[float, float]:
     """Return train and validation accuracy for the current classifier.
 
     Args:
@@ -91,11 +97,16 @@ def report_slices_acc_np(classifier: Union[ClassifierMixin, Pipeline],
         train_labels (np.ndarray): (n_slices, ) Trainig class labels.
         val_slices (np.ndarray): (n_slices, n_clusters) Validation slices.
         val_labels (np.ndarray): (n_slices, ) Validation class labels.
+
+    Return:
+        train_acc (float): The accuracy on training set.
+        val_acc (float): The accuracy on validation set.
     """
     train_acc: float = classifier.score(train_slices, train_labels)
     val_acc: float = classifier.score(val_slices, val_labels)
     info_str: str = str.format("train: {:.5f} val: {:.5f}", train_acc, val_acc)
     print(info_str)
+    return train_acc, val_acc
 
 
 def convert_to_ndarray(all_file_spec_projs: Sequence[Sequence[np.ndarray]],
