@@ -88,9 +88,8 @@ def main(args: List[str]):
                 dataset_generator=dataset_generator,
                 collate_function=collate_func,
                 loader_config=loader_config)
-            classify_common.report_slices_acc(classifier=classifier,
-                                              train=train,
-                                              val=val)
+            train_acc, val_acc = classify_common.report_slices_acc(
+                classifier=classifier, train=train, val=val)
 
 
 if __name__ == "__main__":
