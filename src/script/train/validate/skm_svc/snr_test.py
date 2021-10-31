@@ -29,12 +29,10 @@ def get_argparse() -> ArgumentParser:
         type=float,
         nargs=2,
         default=[5.0, 50.0],
-        required=True,
         help="the range of the tested snr in the format of (min_snr, max_snr)")
     parser.add_argument("--snr_step",
                         type=float,
                         default=5.0,
-                        required=True,
                         help="the step size of snr")
     return parser
 
