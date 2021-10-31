@@ -60,9 +60,10 @@ def generate_proj_dataset(
     return ret_datasets[0], ret_datasets[1]
 
 
-def report_slices_acc(classifier: Union[ClassifierMixin,
-                                        Pipeline], train: ProjDataset,
-                      val: ProjDataset) -> Tuple[float, float]:
+def report_slices_acc(classifier: Union[ClassifierMixin, Pipeline],
+                      train: ProjDataset,
+                      val: ProjDataset,
+                      to_print: bool = True) -> Tuple[float, float]:
     """Return train and validation accuracy for the current classifier.
 
     Args:
@@ -82,13 +83,16 @@ def report_slices_acc(classifier: Union[ClassifierMixin,
                                 train_slices=train_slices,
                                 train_labels=train_labels,
                                 val_slices=val_slices,
-                                val_labels=val_labels)
+                                val_labels=val_labels,
+                                to_print=to_print)
 
 
-def report_slices_acc_np(classifier: Union[ClassifierMixin,
-                                           Pipeline], train_slices: np.ndarray,
-                         train_labels: np.ndarray, val_slices: np.ndarray,
-                         val_labels: np.ndarray) -> Tuple[float, float]:
+def report_slices_acc_np(classifier: Union[ClassifierMixin, Pipeline],
+                         train_slices: np.ndarray,
+                         train_labels: np.ndarray,
+                         val_slices: np.ndarray,
+                         val_labels: np.ndarray,
+                         to_print: bool = True) -> Tuple[float, float]:
     """Return train and validation accuracy for the current classifier.
 
     Args:
@@ -104,8 +108,10 @@ def report_slices_acc_np(classifier: Union[ClassifierMixin,
     """
     train_acc: float = classifier.score(train_slices, train_labels)
     val_acc: float = classifier.score(val_slices, val_labels)
-    info_str: str = str.format("train: {:.5f} val: {:.5f}", train_acc, val_acc)
-    print(info_str)
+    if to_print:
+        info_str: str = str.format("train: {:.5f} val: {:.5f}", train_acc,
+                                   val_acc)
+        print(info_str)
     return train_acc, val_acc
 
 
