@@ -214,3 +214,35 @@ class SVCArgumentParser(ArgumentParser):
                           required=True,
                           type=str,
                           help="path to the SVC configuration *.json file")
+
+
+class RFCArgumentParser(ArgumentParser):
+    def __init__(self,
+                 prog=None,
+                 usage=None,
+                 description=None,
+                 epilog=None,
+                 parents=[],
+                 formatter_class=HelpFormatter,
+                 prefix_chars='-',
+                 fromfile_prefix_chars=None,
+                 argument_default=None,
+                 conflict_handler='error',
+                 add_help=False,
+                 allow_abbrev=True):
+        super().__init__(prog=prog,
+                         usage=usage,
+                         description=description,
+                         epilog=epilog,
+                         parents=parents,
+                         formatter_class=formatter_class,
+                         prefix_chars=prefix_chars,
+                         fromfile_prefix_chars=fromfile_prefix_chars,
+                         argument_default=argument_default,
+                         conflict_handler=conflict_handler,
+                         add_help=add_help,
+                         allow_abbrev=allow_abbrev)
+        self.add_argument("--rfc_config_path",
+                          required=True,
+                          type=str,
+                          help="path to the RFC configuration *.json file")
