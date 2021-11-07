@@ -4,7 +4,7 @@ import sys
 from abc import ABC
 from argparse import ArgumentParser, HelpFormatter
 from dataclasses import dataclass, field
-from typing import Type, TypeVar, Union
+from typing import Optional, Type, TypeVar, Union
 
 from dataclasses_json import dataclass_json
 
@@ -65,8 +65,34 @@ class SVCConfig(MLConfigBase):
             self.gamma = str.lower(self.gamma)
 
 
+@dataclass_json
+@dataclass(init=True,
+           repr=True,
+           eq=True,
+           order=False,
+           unsafe_hash=False,
+           frozen=False)
+class RFCConfig(MLConfigBase):
+    n_estimators: int = field(default=100)
+    criterion: str = field(default="gini")
+    max_depth: Optional[int] = field(default=None)
+    min_samples_split: Union[int, float] = field(default=2)
+    min_samples_leaf: Union[int, float] = field(default=1)
+    min_weight_fraction_leaf: float = field(default=0.0)
+    max_features: Union[int, float, str] = field(default="auto")
+    max_leaf_nodes: Optional[int] = field(default=None)
+    min_impurity_decrease: float = field(default=0.0)
+    boot_strap: bool = field(default=True)
+    oob_score: bool = field(default=False)
+
+    def __post_init__(self):
+        self.criterion = str.lower(self.criterion)
+        if self.min_samples_split > 1:
+            self.min_samples_split = int(self.min_samples_split)
+
+
 MLConfigType = TypeVar("MLConfigType", MLConfigBase, PCAConfig, SKMConfig,
-                       SVCConfig)
+                       SVCConfig, RFCConfig)
 
 
 def get_alg_config_from_json(config_file_path: str,
