@@ -20,7 +20,7 @@ import script.train.skl_loader.skm as skl_skm_laoder
 from audio_classifier.train.data.dataset.composite import KFoldDatasetGenerator
 from script.train import train_common
 from script.train.classification import classify_common
-from script.train.validate.skm_svc import snr_test
+from script.train.validate.skm_classify import snr_test
 from sklearn.base import ClassifierMixin
 from sklearn.pipeline import Pipeline
 from sklearn_plugins.cluster.spherical_kmeans import SphericalKMeans
