@@ -10,7 +10,6 @@ import audio_classifier.train.config.alg as conf_alg
 import audio_classifier.train.config.dataset as conf_dataset
 import audio_classifier.train.config.loader as conf_loader
 import numpy as np
-# from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 
 from ... import train_common
