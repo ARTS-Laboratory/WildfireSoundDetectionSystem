@@ -12,7 +12,7 @@ import audio_classifier.train.config.loader as conf_loader
 import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.pipeline import Pipeline
-from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
 
 from ... import train_common
 from .. import classify_common
@@ -73,29 +73,29 @@ def get_config(argv: Namespace):
     return dataset_config, mel_spec_config, reshape_config, pool_config, pca_config, rfc_config, loader_config
 
 
-def train_pca_svc(curr_val_fold: int,
+def train_pca_rfc(curr_val_fold: int,
                   dataset: classify_common.ProjDataset,
                   pca_config: conf_alg.PCAConfig,
-                  svc_config: conf_alg.SVCConfig,
+                  rfc_config: conf_alg.RFCConfig,
                   export_path: str,
                   model_path_stub: str = "val_{:02d}.pkl") -> Pipeline:
     train_slices, train_labels = classify_common.convert_to_ndarray(
         all_file_spec_projs=dataset.all_file_spec_projs, labels=dataset.labels)
-    pca_svc: Pipeline = train_pca_svc_np(curr_val_fold=curr_val_fold,
+    pca_svc: Pipeline = train_pca_rfc_np(curr_val_fold=curr_val_fold,
                                          train_slices=train_slices,
                                          train_labels=train_labels,
-                                         svc_config=svc_config,
                                          pca_config=pca_config,
+                                         rfc_config=rfc_config,
                                          export_path=export_path,
                                          model_path_stub=model_path_stub)
     return pca_svc
 
 
-def train_pca_svc_np(curr_val_fold: int,
+def train_pca_rfc_np(curr_val_fold: int,
                      train_slices: np.ndarray,
                      train_labels: np.ndarray,
                      pca_config: conf_alg.PCAConfig,
-                     svc_config: conf_alg.SVCConfig,
+                     rfc_config: conf_alg.RFCConfig,
                      export_path: str,
                      model_path_stub: str = "val_{:02d}.pkl") -> Pipeline:
     curr_val_model_path = path.join(export_path,
@@ -103,13 +103,21 @@ def train_pca_svc_np(curr_val_fold: int,
     pca = PCA(n_components=pca_config.n_components,
               whiten=pca_config.whiten,
               copy=True)
-    svc = SVC(C=svc_config.C,
-              kernel=svc_config.kernel,
-              degree=svc_config.degree,
-              gamma=svc_config.gamma,
-              coef0=svc_config.coef0)
-    pca_svc = Pipeline(steps=[("pca", pca), ("svc", svc)])
-    pca_svc.fit(train_slices, train_labels)
+    rfc = RandomForestClassifier(
+        n_estimators=rfc_config.n_estimators,
+        criterion=rfc_config.criterion,
+        max_depth=rfc_config.max_depth,
+        min_samples_split=rfc_config.min_samples_split,
+        min_samples_leaf=rfc_config.min_samples_leaf,
+        min_weight_fraction_leaf=rfc_config.min_weight_fraction_leaf,
+        max_features=rfc_config.max_features,
+        max_leaf_nodes=rfc_config.max_leaf_nodes,
+        min_impurity_decrease=rfc_config.min_impurity_decrease,
+        bootstrap=rfc_config.boot_strap,
+        oob_score=rfc_config.oob_score,
+        n_jobs=-1)
+    pca_rfc = Pipeline(steps=[("pca", pca), ("rfc", rfc)])
+    pca_rfc.fit(train_slices, train_labels)
     with open(curr_val_model_path, "wb") as pipeline_file:
-        pickle.dump(pca_svc, pipeline_file)
-    return pca_svc
+        pickle.dump(pca_rfc, pipeline_file)
+    return pca_rfc
