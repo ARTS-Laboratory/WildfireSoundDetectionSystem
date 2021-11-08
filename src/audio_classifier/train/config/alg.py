@@ -4,7 +4,7 @@ import sys
 from abc import ABC
 from argparse import ArgumentParser, HelpFormatter
 from dataclasses import dataclass, field
-from typing import Type, TypeVar, Union
+from typing import Optional, Type, TypeVar, Union
 
 from dataclasses_json import dataclass_json
 
@@ -65,8 +65,38 @@ class SVCConfig(MLConfigBase):
             self.gamma = str.lower(self.gamma)
 
 
+@dataclass_json
+@dataclass(init=True,
+           repr=True,
+           eq=True,
+           order=False,
+           unsafe_hash=False,
+           frozen=False)
+class RFCConfig(MLConfigBase):
+    n_estimators: int = field(default=100)
+    criterion: str = field(default="gini")
+    max_depth: Optional[int] = field(default=None)
+    min_samples_split: Union[int, float] = field(default=2)
+    min_samples_leaf: Union[int, float] = field(default=1)
+    min_weight_fraction_leaf: float = field(default=0.0)
+    max_features: Union[int, float, str] = field(default="auto")
+    max_leaf_nodes: Optional[int] = field(default=None)
+    min_impurity_decrease: float = field(default=0.0)
+    boot_strap: bool = field(default=True)
+    oob_score: bool = field(default=False)
+
+    def __post_init__(self):
+        self.criterion = str.lower(self.criterion)
+        if self.min_samples_split > 1:
+            self.min_samples_split = int(self.min_samples_split)
+        if isinstance(self.max_depth, str):
+            self.max_depth = None
+        if isinstance(self.max_leaf_nodes, str):
+            self.max_leaf_nodes = None
+
+
 MLConfigType = TypeVar("MLConfigType", MLConfigBase, PCAConfig, SKMConfig,
-                       SVCConfig)
+                       SVCConfig, RFCConfig)
 
 
 def get_alg_config_from_json(config_file_path: str,
@@ -188,3 +218,35 @@ class SVCArgumentParser(ArgumentParser):
                           required=True,
                           type=str,
                           help="path to the SVC configuration *.json file")
+
+
+class RFCArgumentParser(ArgumentParser):
+    def __init__(self,
+                 prog=None,
+                 usage=None,
+                 description=None,
+                 epilog=None,
+                 parents=[],
+                 formatter_class=HelpFormatter,
+                 prefix_chars='-',
+                 fromfile_prefix_chars=None,
+                 argument_default=None,
+                 conflict_handler='error',
+                 add_help=False,
+                 allow_abbrev=True):
+        super().__init__(prog=prog,
+                         usage=usage,
+                         description=description,
+                         epilog=epilog,
+                         parents=parents,
+                         formatter_class=formatter_class,
+                         prefix_chars=prefix_chars,
+                         fromfile_prefix_chars=fromfile_prefix_chars,
+                         argument_default=argument_default,
+                         conflict_handler=conflict_handler,
+                         add_help=add_help,
+                         allow_abbrev=allow_abbrev)
+        self.add_argument("--rfc_config_path",
+                          required=True,
+                          type=str,
+                          help="path to the RFC configuration *.json file")
