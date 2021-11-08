@@ -99,7 +99,9 @@ def main(args: List[str]):
             metrics_v = skm_classify_common.calculate_metrics(
                 classifier=classifier, dataset=val)
             curr_val_metrics.append((metrics_t, metrics_v))
-            print(str.format("train: {} val: {}", metrics_t, metrics_v))
+            print(
+                str.format("snr: {} train: {} val: {}", snr, metrics_t,
+                           metrics_v))
         metrics.append(curr_val_metrics)
     with open(metric_path, mode="wb") as metric_file:
         pickle.dump(metrics, metric_file)
