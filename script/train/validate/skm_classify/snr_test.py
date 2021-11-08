@@ -5,8 +5,6 @@ from argparse import Namespace
 from functools import partial
 from typing import List, Sequence, Tuple, Union
 
-import numpy as np
-
 import audio_classifier.common.feature_engineering.pool as feature_pool
 import audio_classifier.train.collate.augment.sound_wave as collate_augment_sound_wave
 import audio_classifier.train.collate.base as collate_base
@@ -15,12 +13,14 @@ import audio_classifier.train.collate.feature_engineering.skm as collate_skm
 import audio_classifier.train.collate.preprocessing.spectrogram.reshape as collate_reshape
 import audio_classifier.train.collate.preprocessing.spectrogram.transform as collate_transform
 import audio_classifier.train.config.augment as conf_augment
+import numpy as np
 import script.train.skl_loader.classifier as skl_classifier_loader
 import script.train.skl_loader.skm as skl_skm_laoder
 from audio_classifier.train.data.dataset.composite import KFoldDatasetGenerator
 from script.train import train_common
 from script.train.classification import classify_common
-from script.train.validate.skm_classify import snr_test
+from script.train.validate import validate_common
+from script.train.validate.skm_classify import skm_classify_common, snr_test
 from sklearn.base import ClassifierMixin
 from sklearn.pipeline import Pipeline
 from sklearn_plugins.cluster.spherical_kmeans import SphericalKMeans
@@ -45,7 +45,8 @@ def main(args: List[str]):
         metadata=metadata,
         dataset_config=dataset_config,
         mel_spec_config=mel_spec_config)
-    metrics: List[List[Tuple[float, float]]] = list()
+    metrics: List[List[Tuple[validate_common.ClassificationMetrics,
+                             validate_common.ClassificationMetrics]]] = list()
     for curr_val_fold in range(dataset_config.k_folds):
         print(str.format("curr_val_fold {}", curr_val_fold))
         curr_val_skm_path_stub: str = skl_skm_laoder.get_curr_val_skm_path_stub(
@@ -67,7 +68,9 @@ def main(args: List[str]):
                                          argv.snr_range[1] + 1.0,
                                          argv.snr_step)
         snr_list = np.insert(snr_list, 0, np.nan)
-        curr_val_metric: List[Tuple[float, float]] = list()
+        curr_val_metrics: List[
+            Tuple[validate_common.ClassificationMetrics,
+                  validate_common.ClassificationMetrics]] = list()
         for snr in snr_list:
             augment_ratio: float = 1.0 if np.isnan(snr) == False else 0.0
             augment_conifg = conf_augment.SoundWaveAugmentConfig(
@@ -91,13 +94,13 @@ def main(args: List[str]):
                 dataset_generator=dataset_generator,
                 collate_function=collate_func,
                 loader_config=loader_config)
-            train_acc, val_acc = classify_common.report_slices_acc(
-                classifier=classifier, train=train, val=val, to_print=False)
-            print(
-                str.format("curr_snr {} train {} val {}", snr, train_acc,
-                           val_acc))
-            curr_val_metric.append((train_acc, val_acc))
-        metrics.append(curr_val_metric)
+            metrics_t = skm_classify_common.calculate_metrics(
+                classifier=classifier, dataset=train)
+            metrics_v = skm_classify_common.calculate_metrics(
+                classifier=classifier, dataset=val)
+            curr_val_metrics.append((metrics_t, metrics_v))
+            print(str.format("train: {} val: {}", metrics_t, metrics_v))
+        metrics.append(curr_val_metrics)
     with open(metric_path, mode="wb") as metric_file:
         pickle.dump(metrics, metric_file)
 
