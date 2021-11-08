@@ -23,8 +23,7 @@ def calculate_metrics(
         validate_common.ClassificationMetrics: The validation classification metrics.
     """
     pred_labels: Sequence[int] = list()
-    for spec_projs, true_label in zip(dataset.all_file_spec_projs,
-                                      dataset.labels):
+    for spec_projs in dataset.all_file_spec_projs:
         curr_slices_preds: np.ndarray = classifier.predict(X=spec_projs)
         pred_label: int = np.argmax(np.bincount(curr_slices_preds,
                                                 minlength=2))[0]
