@@ -65,6 +65,8 @@ def apply_pool_func(
         pool_size = len(spec_projs)
     if stride_size == -1:
         stride_size = pool_size
+    if len(spec_projs) < pool_size:
+        return list()
     pool_projs: MutableSequence[np.ndarray] = deque()
     for begin_idx in range(0, len(spec_projs) - pool_size + 1, stride_size):
         end_idx: int = begin_idx + pool_size

@@ -28,6 +28,8 @@ def pool_collate(
             pool_func=pool_func,
             pool_size=pool_config.pool_size,
             stride_size=pool_config.stride_size)
+        if len(pool_projs) == 0:
+            continue
         ret_data.append(
             (filename, pool_projs, sample_freq, sample_time, label))
     return ret_data
