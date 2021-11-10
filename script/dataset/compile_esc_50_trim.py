@@ -61,7 +61,7 @@ def main(args: List[str]):
     filenames, folds = process_metadata(METADATA_SRC_PATH)
     for filename, fold in zip(filenames, folds):
         curr_val_path: str = os.path.join(AUDIO_EXPORT_PATH,
-                                          str.format("val{}", fold))
+                                          str.format("fold{}", fold))
         os.makedirs(curr_val_path, exist_ok=True)
         src_path: str = os.path.join(DATASET_SRC_PATH, "audio", filename)
         export_path: str = os.path.join(curr_val_path, filename)
