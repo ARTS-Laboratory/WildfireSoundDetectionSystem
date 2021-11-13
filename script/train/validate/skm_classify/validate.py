@@ -6,14 +6,11 @@ from functools import partial
 from typing import List, Sequence, Tuple, Union
 
 import audio_classifier.common.feature_engineering.pool as feature_pool
-import audio_classifier.train.collate.augment.sound_wave as collate_augment_sound_wave
 import audio_classifier.train.collate.base as collate_base
 import audio_classifier.train.collate.feature_engineering.pool as collate_pool
 import audio_classifier.train.collate.feature_engineering.skm as collate_skm
 import audio_classifier.train.collate.preprocessing.spectrogram.reshape as collate_reshape
 import audio_classifier.train.collate.preprocessing.spectrogram.transform as collate_transform
-import audio_classifier.train.config.augment as conf_augment
-import numpy as np
 import script.train.skl_loader.classifier as skl_classifier_loader
 import script.train.skl_loader.skm as skl_skm_laoder
 from audio_classifier.train.data.dataset.composite import KFoldDatasetGenerator
