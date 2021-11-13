@@ -33,7 +33,7 @@ def main(args: List[str]):
     class_skm_path_stub: str = "class_{:02d}/model.pkl"
     classifier_path_stub: str = os.path.join(argv.classifier_path,
                                              val_fold_path_stub + ".pkl")
-    metric_path: str = os.path.join(argv.classifier_path, "metric.pkl")
+    metric_path: str = os.path.join(argv.classifier_path, "validate_metric.pkl")
     # os.makedirs(export_path, exist_ok=True)
     dataset_config, mel_spec_config, reshape_config, pool_config, loader_config = snr_test.get_config(
         argv=argv)
