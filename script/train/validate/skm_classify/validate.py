@@ -17,7 +17,7 @@ from audio_classifier.train.data.dataset.composite import KFoldDatasetGenerator
 from script.train import train_common
 from script.train.classification import classify_common
 from script.train.validate import validate_common
-from script.train.validate.skm_classify import skm_classify_common, snr_test
+from script.train.validate.skm_classify import skm_classify_common, snr_test, validate
 from sklearn.base import ClassifierMixin
 from sklearn.pipeline import Pipeline
 from sklearn_plugins.cluster.spherical_kmeans import SphericalKMeans
@@ -27,7 +27,7 @@ CollateFuncType = train_common.CollateFuncType
 
 
 def main(args: List[str]):
-    argv: Namespace = snr_test.parse_args(args)
+    argv: Namespace = validate.parse_args(args)
     skm_root_path: str = argv.skm_root_path
     val_fold_path_stub: str = "val_{:02d}"
     class_skm_path_stub: str = "class_{:02d}/model.pkl"
