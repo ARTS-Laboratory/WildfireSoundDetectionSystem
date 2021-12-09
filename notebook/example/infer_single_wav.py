@@ -4,7 +4,7 @@ import pickle
 from typing import Sequence
 
 import audio_classifier.common.feature_engineering.pool as fe_pool
-import audio_classifier.common.feature_engineering.skm.proj as fe_skm_proj
+import audio_classifier.common.feature_engineering.skm_proj as fe_skm_proj
 import audio_classifier.common.preprocessing.spectrogram.reshape as spec_reshape
 import audio_classifier.common.preprocessing.spectrogram.transform as spec_transform
 import audio_classifier.config.feature_engineering.pool as conf_pool
@@ -20,7 +20,7 @@ from sklearn_plugins.cluster.spherical_kmeans import SphericalKMeans
 # AUDIO_PATH: str = "../test/test_dataset/folder_dataset/0_0.wav"
 AUDIO_PATH: str = "../test/test_audio/fire_01.wav"
 CONFIG_ROOT_PATH: str = "../../config"
-MODEL_ROOT_PATH: str = "../../model/baseline/base/spec_00_reshape_00_skm_00/"
+MODEL_ROOT_PATH: str = "../../model/binary_fire/spec_00_reshape_00_skm_00"
 SPEC_CONFIG_PATH: str = os.path.join(CONFIG_ROOT_PATH,
                                      "preprocessing/spec/00.json")
 RESHAPE_CONFIG_PATH: str = os.path.join(CONFIG_ROOT_PATH,
@@ -33,7 +33,9 @@ CURR_VAL_FOLD: int = 1
 VAL_PATH_STUB: str = "val_{:02d}"
 CLASS_PATH_STUB: str = "class_{:02d}"
 SKM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "skm")
-SVM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "svm", "pool_02_svc_02")
+# SVM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "rfc", "pool_02_rfc_02")
+SVM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "rfc", "pool_02_pca_00_rfc_02")
+# SVM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "rfc", "augment_01_pool_02_pca_00_rfc_02")
 
 #%%
 spec_config: conf_spec.MelSpecConfig = conf_spec.get_spec_config_from_json(
