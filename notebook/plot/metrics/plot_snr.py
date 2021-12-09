@@ -20,6 +20,11 @@ metric_file_path: str = path.join(
     PROJECT_ROOT_PATH,
     "metrics/binary_fire/spec_00_reshape_00_skm_00/snr_augment_01_pool_02_pca_00_svc_04.pkl"
 )
+# metric_file_path: str = path.join(
+#     PROJECT_ROOT_PATH,
+#     "metrics/binary_fire/spec_00_reshape_00_skm_00/snr_pool_02_pca_00_svc_04.pkl"
+# )
+
 with open(metric_file_path, mode="rb") as metric_file:
     metrics: Sequence[Sequence[Tuple[ClassificationMetrics,
                                      ClassificationMetrics]]] = pickle.load(
@@ -95,11 +100,14 @@ plt.axhline(val_acc_avg[0],
             linestyle="--",
             linewidth=1,
             label="No SNR")
+plt.xlabel("SNR")
+plt.ylabel("Accuracy")
 plt.legend()
 ax = plt.gca()
 ax.get_yaxis().get_major_formatter().set_useOffset(False)
 # plt.xlim(SNR_RANGE[0], SNR_RANGE[1])
 plt.xticks(SNR_AXIS, rotation=90)
+plt.tight_layout()
 plt.savefig(val_acc_fig_path, dpi=300)
 
 plt.show()
@@ -113,10 +121,15 @@ plt.axhline(val_auc_avg[0],
             linestyle="--",
             linewidth=1,
             label="No SNR")
+plt.xlabel("SNR")
+plt.ylabel("ROC AUC")
 plt.legend()
 ax = plt.gca()
 ax.get_yaxis().get_major_formatter().set_useOffset(False)
 plt.xticks(SNR_AXIS, rotation=90)
+plt.tight_layout()
 plt.savefig(val_roc_auc_fig_path, dpi=300)
 plt.show()
 
+
+# %%
