@@ -1,8 +1,10 @@
+import os
+import pickle
 import sys
 from argparse import ArgumentParser, Namespace
 from collections import deque
 from functools import partial
-from typing import Deque, List, Sequence, Union
+from typing import Deque, List, Sequence, Tuple, Union
 
 import audio_classifier.common.feature_engineering.pool as feature_pool
 import audio_classifier.common.feature_engineering.skm_proj as feature_skm_proj
@@ -44,6 +46,9 @@ def main(args: List[str]):
     metadata: MetaDataType = train_common.get_metadata(configs.dataset_config)
     datasets: List[dataset_base.FolderDataset] = generate_fold_datasets(
         configs=configs, metadata=metadata)
+    accs: Tuple[List[float], List[float]] = (list(), list())
+    train_accs = accs[0]
+    test_accs = accs[1]
     for curr_fold in range(configs.dataset_config.k_folds):
         curr_dataset = ConcatDataset(datasets[0:curr_fold + 1])
         skms: List[SphericalKMeans] = fit_skms(curr_dataset, configs)
@@ -54,6 +59,12 @@ def main(args: List[str]):
         test_acc: float = infer_single_audio(skms=skms,
                                              classifier=classifier,
                                              configs=configs)
+        train_accs.append(train_acc)
+        test_accs.append(test_acc)
+    os.makedirs(configs.export_path)
+    accs_path: str = os.path.join(configs.export_path, "accs.pkl")
+    with open(accs_path, mode="wb") as accs_file:
+        pickle.dump(accs, accs_file)
 
 
 class BiasVarianceConfig:
