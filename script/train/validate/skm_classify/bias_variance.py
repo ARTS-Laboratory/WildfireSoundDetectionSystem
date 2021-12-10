@@ -282,7 +282,7 @@ def infer_single_audio(skms: Sequence[SphericalKMeans], classifier: Pipeline,
         pool_size=configs.pool_config.pool_size,
         stride_size=configs.pool_config.stride_size)
     pred = classifier.predict(np.asarray(pool_slices))
-    # the audio is a fire
+    # only have a single test audio
     res = np.bincount(pred, minlength=2)
     return res[0] / (res[0] + res[1])
 
