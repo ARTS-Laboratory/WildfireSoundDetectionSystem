@@ -46,9 +46,8 @@ def main(args: List[str]):
     metadata: MetaDataType = train_common.get_metadata(configs.dataset_config)
     datasets: List[dataset_base.FolderDataset] = generate_fold_datasets(
         configs=configs, metadata=metadata)
-    accs: Tuple[List[float], List[float]] = (list(), list())
-    train_accs = accs[0]
-    test_accs = accs[1]
+    train_accs = list()
+    test_accs = list()
     for curr_fold in range(configs.dataset_config.k_folds):
         curr_dataset = ConcatDataset(datasets[0:curr_fold + 1])
         skms: List[SphericalKMeans] = fit_skms(curr_dataset, configs)
@@ -63,6 +62,7 @@ def main(args: List[str]):
         test_accs.append(test_acc)
     os.makedirs(configs.export_path)
     accs_path: str = os.path.join(configs.export_path, "accs.pkl")
+    accs: Tuple[List[float], List[float]] = (train_accs, test_accs)
     with open(accs_path, mode="wb") as accs_file:
         pickle.dump(accs, accs_file)
 
