@@ -7,12 +7,14 @@ from functools import partial
 from typing import Deque, List, Sequence, Tuple, Union
 
 import audio_classifier.common.feature_engineering.pool as feature_pool
+import audio_classifier.train.config.augment as conf_augment
 import audio_classifier.common.feature_engineering.skm_proj as feature_skm_proj
 import audio_classifier.common.preprocessing.spectrogram.reshape as spec_reshape
 import audio_classifier.common.preprocessing.spectrogram.transform as spec_transform
 import audio_classifier.config.feature_engineering.pool as conf_pool
 import audio_classifier.config.preprocessing.reshape as conf_reshape
 import audio_classifier.config.preprocessing.spec as conf_spec
+import audio_classifier.train.collate.augment.sound_wave as collate_augment_sound_wave
 import audio_classifier.train.collate.base as collate_base
 import audio_classifier.train.collate.feature_engineering.pool as collate_pool
 import audio_classifier.train.collate.feature_engineering.skm as collate_skm
@@ -51,16 +53,18 @@ def main(args: List[str]):
     for curr_fold in range(configs.dataset_config.k_folds):
         curr_dataset = ConcatDataset(datasets[0:curr_fold + 1])
         skms: List[SphericalKMeans] = fit_skms(curr_dataset, configs)
-        classifier = train_classifier(dataset=curr_dataset,
-                                      skms=skms,
-                                      configs=configs)
-        train_acc: float = classifier.score()
+        classifier, train_acc = train_classifier(dataset=curr_dataset,
+                                                 skms=skms,
+                                                 configs=configs)
         test_acc: float = infer_single_audio(skms=skms,
                                              classifier=classifier,
                                              configs=configs)
         train_accs.append(train_acc)
         test_accs.append(test_acc)
-    os.makedirs(configs.export_path)
+        print(
+            str.format("n_folds {}: train {} test {}", curr_fold + 1,
+                       train_acc, test_acc))
+    os.makedirs(configs.export_path, exist_ok=True)
     accs_path: str = os.path.join(configs.export_path, "accs.pkl")
     accs: Tuple[List[float], List[float]] = (train_accs, test_accs)
     with open(accs_path, mode="wb") as accs_file:
@@ -69,6 +73,7 @@ def main(args: List[str]):
 
 class BiasVarianceConfig:
     dataset_config: conf_dataset.PreSplitFoldDatasetConfig
+    sound_wave_augment_config: conf_augment.SoundWaveAugmentConfig
     mel_spec_config: conf_spec.MelSpecConfig
     reshape_config: conf_reshape.ReshapeConfig
     skm_config: conf_alg.SKMConfig
@@ -84,6 +89,7 @@ class BiasVarianceConfig:
 
     def __init__(self, argv: Namespace):
         dataset_config_path: str = argv.dataset_config_path
+        sound_wave_augment_config_path: str = argv.sound_wave_augment_config_path
         spec_config_path: str = argv.spec_config_path
         reshape_config_path: str = argv.reshape_config_path
         skm_config_path: str = argv.skm_config_path
@@ -93,6 +99,9 @@ class BiasVarianceConfig:
         loader_config_path: str = argv.loader_config_path
         self.dataset_config = conf_dataset.get_dataset_config_from_json(
             dataset_config_path, argv, conf_dataset.PreSplitFoldDatasetConfig)
+        self.sound_wave_augment_config = conf_augment.get_augment_config_from_json(
+            sound_wave_augment_config_path,
+            conf_augment.SoundWaveAugmentConfig)
         self.mel_spec_config = conf_spec.get_spec_config_from_json(
             spec_config_path, conf_spec.MelSpecConfig)
         self.reshape_config = conf_reshape.get_reshape_config_from_json(
@@ -117,6 +126,7 @@ class BiasVarianceConfig:
 def get_argparse() -> ArgumentParser:
     parser = ArgumentParser(parents=[
         conf_dataset.DatasetConfigArgumentParser(),
+        conf_augment.SoundWaveAugmentConfigArgumentParser(),
         conf_spec.SpecConfigArgumentParser(),
         conf_reshape.ReshapeConfigArgumentParser(),
         conf_alg.SKMArgumentParser(),
@@ -197,6 +207,9 @@ def fit_skms(dataset: Dataset, configs: BiasVarianceConfig):
                               max_iter=10000)
         # identify optimal k
         visualizer = SphericalKElbowVisualizer(estimator=skm,
+                                               k=range(configs.k_min,
+                                                       configs.k_max,
+                                                       configs.k_step),
                                                locate_elbow=True)
         visualizer.fit(slices)
         k_value: Union[int, None] = visualizer.elbow_value_
@@ -220,6 +233,8 @@ def train_classifier(dataset: Dataset, skms: Sequence[SphericalKMeans],
                      configs: BiasVarianceConfig):
     collate_func: CollateFuncType = collate_base.EnsembleCollateFunction(
         collate_funcs=[
+            partial(collate_augment_sound_wave.add_white_noise_collate,
+                    config=configs.sound_wave_augment_config),
             partial(collate_transform.mel_spectrogram_collate,
                     config=configs.mel_spec_config),
             partial(collate_reshape.slice_flatten_collate,
@@ -260,7 +275,8 @@ def train_classifier(dataset: Dataset, skms: Sequence[SphericalKMeans],
               coef0=configs.svc_config.coef0)
     pca_svc = Pipeline(steps=[("pca", pca), ("svc", svc)])
     pca_svc.fit(train_slices, train_labels)
-    return pca_svc
+    train_acc: float = pca_svc.score(train_slices, train_labels)
+    return pca_svc, train_acc
 
 
 def infer_single_audio(skms: Sequence[SphericalKMeans], classifier: Pipeline,
