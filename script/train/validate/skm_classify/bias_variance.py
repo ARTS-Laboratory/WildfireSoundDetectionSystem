@@ -48,25 +48,33 @@ def main(args: List[str]):
     metadata: MetaDataType = train_common.get_metadata(configs.dataset_config)
     datasets: List[dataset_base.FolderDataset] = generate_fold_datasets(
         configs=configs, metadata=metadata)
-    train_accs = list()
-    test_accs = list()
+    train_accs: List[float] = list()
+    val_accs: List[float] = list()
+    test_accs: List[float] = list()
+    val_dataset = datasets[-1]
     for curr_fold in range(configs.dataset_config.k_folds):
         curr_dataset = ConcatDataset(datasets[0:curr_fold + 1])
         skms: List[SphericalKMeans] = fit_skms(curr_dataset, configs)
         classifier, train_acc = train_classifier(dataset=curr_dataset,
                                                  skms=skms,
                                                  configs=configs)
+        val_acc: float = val_classifier(dataset=val_dataset,
+                                        skms=skms,
+                                        classifier=classifier,
+                                        configs=configs)
         test_acc: float = infer_single_audio(skms=skms,
                                              classifier=classifier,
                                              configs=configs)
         train_accs.append(train_acc)
+        val_accs.append(val_acc)
         test_accs.append(test_acc)
         print(
-            str.format("n_folds {}: train {} test {}", curr_fold + 1,
-                       train_acc, test_acc))
+            str.format("n_folds {}: train {} val {} test {}", curr_fold + 1,
+                       train_acc, val_acc, test_acc))
     os.makedirs(configs.export_path, exist_ok=True)
     accs_path: str = os.path.join(configs.export_path, "accs.pkl")
-    accs: Tuple[List[float], List[float]] = (train_accs, test_accs)
+    accs: Tuple[List[float], List[float],
+                List[float]] = (train_accs, val_accs, test_accs)
     with open(accs_path, mode="wb") as accs_file:
         pickle.dump(accs, accs_file)
 
@@ -136,16 +144,17 @@ def get_argparse() -> ArgumentParser:
         conf_loader.LoaderConfigArgumentParser()
     ])
     parser.add_argument("--test_audio_path", type=str, required=True)
-    parser.add_argument("--export_path",
-                        type=str,
-                        required=True,
-                        help="the export path")
     parser.add_argument("--k_min", type=int, required=True, help="minimum k")
     parser.add_argument("--k_max", type=int, required=True, help="maximum k")
     parser.add_argument("--k_step",
                         type=int,
                         required=True,
                         help="k step size")
+    parser.add_argument("--export_path",
+                        type=str,
+                        required=True,
+                        help="the export path")
+    parser.add_argument("--export_filename", type=str, default="metrics.pkl")
     return parser
 
 
