@@ -72,7 +72,7 @@ def main(args: List[str]):
             str.format("n_folds {}: train {} val {} test {}", curr_fold + 1,
                        train_acc, val_acc, test_acc))
     os.makedirs(configs.export_path, exist_ok=True)
-    accs_path: str = os.path.join(configs.export_path, "accs.pkl")
+    accs_path: str = os.path.join(configs.export_path, configs.export_filename)
     accs: Tuple[List[float], List[float],
                 List[float]] = (train_accs, val_accs, test_accs)
     with open(accs_path, mode="wb") as accs_file:
@@ -91,6 +91,7 @@ class BiasVarianceConfig:
     loader_config: conf_loader.LoaderConfig
     test_audio_path: str
     export_path: str
+    export_filename: str
     k_min: int
     k_max: int
     k_step: int
@@ -126,6 +127,7 @@ class BiasVarianceConfig:
             loader_config_path)
         self.test_audio_path = argv.test_audio_path
         self.export_path = argv.export_path
+        self.export_filename = argv.export_filename
         self.k_min = argv.k_min
         self.k_max = argv.k_max
         self.k_step = argv.k_step
