@@ -48,10 +48,11 @@ def main(args: List[str]):
         configs=configs, metadata=metadata)
     train_accs = list()
     test_accs = list()
-    for curr_fold in range(configs.dataset_config.k_folds):
-        curr_dataset = ConcatDataset(datasets[0:curr_fold + 1])
-        skms: List[SphericalKMeans] = fit_skms(curr_dataset, configs)
-        classifier = train_classifier(dataset=curr_dataset,
+    val_dataset = datasets[configs.dataset_config.k_folds - 1]
+    for curr_fold in range(configs.dataset_config.k_folds - 1):
+        train_dataset = ConcatDataset(datasets[0:curr_fold + 1])
+        skms: List[SphericalKMeans] = fit_skms(train_dataset, configs)
+        classifier = train_classifier(dataset=train_dataset,
                                       skms=skms,
                                       configs=configs)
         train_acc: float = classifier.score()
@@ -261,6 +262,44 @@ def train_classifier(dataset: Dataset, skms: Sequence[SphericalKMeans],
     pca_svc = Pipeline(steps=[("pca", pca), ("svc", svc)])
     pca_svc.fit(train_slices, train_labels)
     return pca_svc
+
+
+def val_classifier(dataset: Dataset, skms: Sequence[SphericalKMeans],
+                   classifier: Pipeline, configs: BiasVarianceConfig):
+    collate_func: CollateFuncType = collate_base.EnsembleCollateFunction(
+        collate_funcs=[
+            partial(collate_transform.mel_spectrogram_collate,
+                    config=configs.mel_spec_config),
+            partial(collate_reshape.slice_flatten_collate,
+                    config=configs.reshape_config),
+            partial(collate_skm.skm_skl_proj_collate, skms=skms),
+            partial(collate_pool.pool_collate,
+                    pool_func=feature_pool.MeanStdPool(),
+                    pool_config=configs.pool_config)
+        ])
+    # load and preprocess incoming audio
+    loader = DataLoader(dataset=dataset,
+                        collate_fn=collate_func,
+                        num_workers=configs.loader_config.num_workers,
+                        batch_size=configs.loader_config.batch_size)
+    batches_tmp: Deque[Sequence[Sequence]] = deque()
+    np.seterr(divide="ignore")
+    for batch in loader:
+        batches_tmp.append(batch)
+    np.seterr(divide="ignore")
+    filenames, all_file_spec_projs, sample_freqs, sample_times, labels = batch_utils.combine_batches(
+        batches_tmp)
+    proj_dataset = classify_common.ProjDataset(
+        filenames=filenames,
+        all_file_spec_projs=all_file_spec_projs,
+        sample_freqs=sample_freqs,
+        sample_times=sample_times,
+        labels=labels)
+    val_slices, val_labels = classify_common.convert_to_ndarray(
+        all_file_spec_projs=proj_dataset.all_file_spec_projs,
+        labels=proj_dataset.labels)
+    val_acc: float = classifier.score(val_slices, val_labels)
+    return val_acc
 
 
 def infer_single_audio(skms: Sequence[SphericalKMeans], classifier: Pipeline,
