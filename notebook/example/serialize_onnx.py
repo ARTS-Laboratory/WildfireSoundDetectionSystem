@@ -128,8 +128,8 @@ print(skms_input_shape)
 print(classifier_input_shape)
 
 #%%
-dummy_skm_input = np.ones_like([1, skms_input_shape[1]])
-dummy_classifier_input = np.ones_like([1, classifier_input_shape[1]])
+dummy_skm_input = np.ones([1, skms_input_shape[1]])
+dummy_classifier_input = np.ones([1, classifier_input_shape[1]])
 
 
 #%%
