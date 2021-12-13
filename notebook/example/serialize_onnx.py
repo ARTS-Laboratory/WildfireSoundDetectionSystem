@@ -3,11 +3,6 @@ import os
 import pickle
 from typing import Sequence, Union
 
-import skl2onnx
-from skl2onnx.helpers import onnx_helper
-from sklearn.base import ClassifierMixin
-from sklearn.pipeline import Pipeline
-
 import audio_classifier.common.feature_engineering.pool as fe_pool
 import audio_classifier.common.feature_engineering.skm_proj as fe_skm_proj
 import audio_classifier.common.preprocessing.spectrogram.reshape as spec_reshape
@@ -18,6 +13,10 @@ import audio_classifier.config.preprocessing.spec as conf_spec
 import librosa.core as rosa_core
 import numpy as np
 import script.train.skl_loader.skm as skl_skm_laoder
+import skl2onnx
+from skl2onnx.helpers import onnx_helper
+from sklearn.base import ClassifierMixin
+from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
 from sklearn_plugins.cluster.spherical_kmeans import SphericalKMeans
 
