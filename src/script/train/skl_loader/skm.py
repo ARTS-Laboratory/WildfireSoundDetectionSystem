@@ -1,6 +1,7 @@
 import os
 import pickle
 from typing import Sequence
+from onnxruntime import InferenceSession
 
 from sklearn_plugins.cluster.spherical_kmeans import SphericalKMeans
 
@@ -33,4 +34,24 @@ def load_skl_skms(curr_val_skm_path_stub: str,
         with open(skm_path, "rb") as skm_file:
             skm: SphericalKMeans = pickle.load(skm_file)
             skms.append(skm)
+    return skms
+
+
+def load_onnx_skms(curr_val_skm_path_stub: str,
+                   n_classes: int) -> Sequence[InferenceSession]:
+    """Load skm model of all classes in current validation fold.
+
+    Args:
+        curr_val_skm_path_stub (str): [description]
+        n_classes (int): [description]
+
+    Returns:
+        [type]: [description]
+    """
+    skms: Sequence[InferenceSession] = list()
+    for curr_class in range(n_classes):
+        skm_path: str = str.format(
+            curr_val_skm_path_stub,
+            curr_class) if n_classes > 1 else curr_val_skm_path_stub
+        skms.append(InferenceSession(skm_path))
     return skms
