@@ -31,11 +31,11 @@ CURR_VAL_FOLD: int = 1
 VAL_PATH_STUB: str = "val_{:02d}"
 CLASS_PATH_STUB: str = "class_{:02d}"
 SKM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "skm")
-SVM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "svm",
-                                        "pool_02_svc_04")
+# SVM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "svm",
+#                                         "pool_02_svc_04")
 # SVM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "rfc",
 # "pool_02_pca_00_rfc_02")
-# SVM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "rfc", "augment_01_pool_02_pca_00_rfc_02")
+SVM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "svm", "augment_01_pool_02_pca_00_svc_01")
 
 #%%
 dtype = np.float64
