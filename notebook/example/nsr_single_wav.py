@@ -4,7 +4,7 @@ import pickle
 from typing import Sequence
 
 import audio_classifier.common.feature_engineering.pool as fe_pool
-import audio_classifier.common.feature_engineering.skm.proj as fe_skm_proj
+import audio_classifier.common.feature_engineering.skm_proj as fe_skm_proj
 import audio_classifier.common.preprocessing.spectrogram.reshape as spec_reshape
 import audio_classifier.common.preprocessing.spectrogram.transform as spec_transform
 import audio_classifier.config.feature_engineering.pool as conf_pool
