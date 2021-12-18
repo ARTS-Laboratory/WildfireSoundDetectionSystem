@@ -76,8 +76,8 @@ def main(args: List[str]):
         test_acc: float = bias_variance.infer_single_audio(
             skms=skms, classifier=classifier, configs=configs)
         print(
-            str.format("n_folds {}: train {} val {} test {}", curr_fold + 1,
-                       train_acc, val_acc, test_acc))
+            str.format("n_folds {}: k_vals {} train {} val {} test {}",
+                       curr_fold + 1, k_vals, train_acc, val_acc, test_acc))
         # update result
         result.k_vals.append(k_vals)
         result.k_scores.append(k_scores)
