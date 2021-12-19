@@ -66,7 +66,7 @@ def main(args: List[str]):
     val_dataset = datasets[-1]
     for curr_fold in range(configs.dataset_config.k_folds):
         curr_dataset = ConcatDataset(datasets[0:curr_fold + 1])
-        skms, k_vals, k_scores = bias_variance.fit_skms(curr_dataset, configs)
+        skms, k_vals, k_scores = bias_variance.try_fit_skms(curr_dataset, configs)
         classifier, train_acc = bias_variance.train_classifier(
             dataset=curr_dataset, skms=skms, configs=configs)
         val_acc: float = bias_variance.val_classifier(dataset=val_dataset,

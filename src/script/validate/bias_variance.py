@@ -1,6 +1,6 @@
 from argparse import Namespace
 from collections import deque
-from dataclasses import dataclass, field
+from copy import deepcopy
 from functools import partial
 from typing import Deque, List, MutableSequence, Sequence, Union
 
@@ -42,24 +42,46 @@ MetaDataType = train_common.MetaDataType
 CollateFuncType = train_common.CollateFuncType
 
 
-@dataclass
-class BiasVarianceResult:
-    k_min: int = field()
-    k_max: int = field()
-    k_step: int = field()
-    k_vals: MutableSequence[Sequence[int]] = field(default_factory=list)
-    k_scores: MutableSequence[Sequence[Sequence[float]]] = field(
-        default_factory=list)
-    train_accs: MutableSequence[float] = field(default_factory=list)
-    val_accs: MutableSequence[float] = field(default_factory=list)
-    test_accs: MutableSequence[float] = field(default_factory=list)
-    skms: MutableSequence[Sequence[SphericalKMeans]] = field(
-        default_factory=list)
-    classifiers: MutableSequence[Union[Pipeline, ClassifierMixin]] = field(
-        default_factory=list)
+class BiasVarianceResultBase:
+    train_accs: MutableSequence[float]
+    val_accs: MutableSequence[float]
+    test_accs: MutableSequence[float]
+    skms: MutableSequence[Sequence[SphericalKMeans]]
+    classifiers: MutableSequence[Union[Pipeline, ClassifierMixin]]
+
+    def __init__(self) -> None:
+        self.train_accs = list()
+        self.val_accs = list()
+        self.test_accs = list()
+        self.skms = list()
+        self.classifiers = list()
 
 
-class BiasVarianceConfig:
+class BiasVarianceResult(BiasVarianceResultBase):
+    k_min: int
+    k_max: int
+    k_step: int
+    k_vals: MutableSequence[Sequence[int]]
+    k_scores: MutableSequence[Sequence[Sequence[float]]]
+
+    def __init__(self, k_min: int, k_max: int, k_step: int) -> None:
+        super().__init__()
+        self.k_min = k_min
+        self.k_max = k_max
+        self.k_step = k_step
+        self.k_vals = list()
+        self.k_scores = list()
+
+
+class BiasVarianceFixKResult(BiasVarianceResultBase):
+    k_vals: Sequence[int]
+
+    def __init__(self, k_vals: Sequence[int]):
+        super().__init__()
+        self.k_vals = deepcopy(k_vals)
+
+
+class BiasVarianceConfigBase:
     dataset_config: conf_dataset.PreSplitFoldDatasetConfig
     sound_wave_augment_config: conf_augment.SoundWaveAugmentConfig
     mel_spec_config: conf_spec.MelSpecConfig
@@ -72,9 +94,6 @@ class BiasVarianceConfig:
     test_audio_path: str
     export_path: str
     export_filename: str
-    k_min: int
-    k_max: int
-    k_step: int
 
     def __init__(self, argv: Namespace):
         dataset_config_path: str = argv.dataset_config_path
@@ -108,13 +127,10 @@ class BiasVarianceConfig:
         self.test_audio_path = argv.test_audio_path
         self.export_path = argv.export_path
         self.export_filename = argv.export_filename
-        self.k_min = argv.k_min
-        self.k_max = argv.k_max
-        self.k_step = argv.k_step
 
 
 def generate_fold_datasets(
-        configs: BiasVarianceConfig,
+        configs: BiasVarianceConfigBase,
         metadata: MetaDataType) -> List[dataset_base.FolderDataset]:
     datasets: List[dataset_base.FolderDataset] = list()
     for curr_fold in range(configs.dataset_config.k_folds):
@@ -127,7 +143,27 @@ def generate_fold_datasets(
     return datasets
 
 
-def fit_skms(dataset: Dataset, configs: BiasVarianceConfig):
+class BiasVarianceConfig(BiasVarianceConfigBase):
+    k_min: int
+    k_max: int
+    k_step: int
+
+    def __init__(self, argv: Namespace):
+        super().__init__(argv)
+        self.k_min = argv.k_min
+        self.k_max = argv.k_max
+        self.k_step = argv.k_step
+
+
+class BiasVarianceFixKConfig(BiasVarianceConfigBase):
+    k_vals: List[int]
+
+    def __init__(self, argv: Namespace):
+        super().__init__(argv)
+        self.k_vals = argv.k_vals
+
+
+def try_fit_skms(dataset: Dataset, configs: BiasVarianceConfig):
     collate_func: CollateFuncType = collate_base.EnsembleCollateFunction(
         collate_funcs=[
             partial(collate_transform.mel_spectrogram_collate,
@@ -193,8 +229,52 @@ def fit_skms(dataset: Dataset, configs: BiasVarianceConfig):
     return skms, k_vals, k_scores
 
 
+def fit_skms(dataset: Dataset, configs: BiasVarianceFixKConfig):
+    collate_func: CollateFuncType = collate_base.EnsembleCollateFunction(
+        collate_funcs=[
+            partial(collate_transform.mel_spectrogram_collate,
+                    config=configs.mel_spec_config),
+            partial(collate_reshape.slice_flatten_collate,
+                    config=configs.reshape_config)
+        ])
+    # load and preprocess incoming audio
+    loader = DataLoader(dataset=dataset,
+                        collate_fn=collate_func,
+                        num_workers=configs.loader_config.num_workers,
+                        batch_size=configs.loader_config.batch_size)
+    batches_tmp: Deque[Sequence[Sequence]] = deque()
+    np.seterr(divide="ignore")
+    for batch in loader:
+        batches_tmp.append(batch)
+    np.seterr(divide="ignore")
+    filenames, flat_slices, sample_freqs, sample_times, labels = batch_utils.combine_batches(
+        batches_tmp)
+    # the actual data used to fit skm
+    train = feature_common.SliceDataset(filenames=filenames,
+                                        flat_slices=flat_slices,
+                                        sample_freqs=sample_freqs,
+                                        sample_times=sample_times,
+                                        labels=labels)
+    slices, labels = feature_common.convert_to_ndarray(slice_dataset=train)
+    unique_labels: np.ndarray = np.unique(labels)
+    skms: List[SphericalKMeans] = list()
+    for curr_label, k_val in zip(unique_labels, configs.k_vals):
+        # train skm with k
+        skm = skm = SphericalKMeans(
+            n_clusters=k_val,
+            n_components=configs.skm_config.n_components,
+            normalize=configs.skm_config.normalize,
+            standardize=configs.skm_config.standardize,
+            whiten=configs.skm_config.whiten,
+            copy=True,
+            max_iter=10000)
+        skm.fit(slices)
+        skms.append(skm)
+    return skms
+
+
 def train_classifier(dataset: Dataset, skms: Sequence[SphericalKMeans],
-                     configs: BiasVarianceConfig):
+                     configs: BiasVarianceConfigBase):
     collate_func: CollateFuncType = collate_base.EnsembleCollateFunction(
         collate_funcs=[
             partial(collate_augment_sound_wave.add_white_noise_collate,
@@ -244,7 +324,7 @@ def train_classifier(dataset: Dataset, skms: Sequence[SphericalKMeans],
 
 
 def val_classifier(dataset: Dataset, skms: Sequence[SphericalKMeans],
-                   classifier: Pipeline, configs: BiasVarianceConfig):
+                   classifier: Pipeline, configs: BiasVarianceConfigBase):
     collate_func: CollateFuncType = collate_base.EnsembleCollateFunction(
         collate_funcs=[
             partial(collate_transform.mel_spectrogram_collate,
@@ -282,7 +362,7 @@ def val_classifier(dataset: Dataset, skms: Sequence[SphericalKMeans],
 
 
 def infer_single_audio(skms: Sequence[SphericalKMeans], classifier: Pipeline,
-                       configs: BiasVarianceConfig):
+                       configs: BiasVarianceConfigBase):
     sound_wave, _ = rosa_core.load(path=configs.test_audio_path,
                                    sr=configs.mel_spec_config.sample_rate,
                                    mono=True)
