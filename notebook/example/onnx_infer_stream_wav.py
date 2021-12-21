@@ -115,35 +115,7 @@ class AudioClassifier():
     def run(self, audio_stream: AudioStream,
             callback: Optional[Callable[[np.ndarray], None]]):
         for curr_chunk in audio_stream:
-            mel_spec, mel_freq, mel_time = spec_transform.transform_mel_spectrogram(
-                sound_wave=curr_chunk,
-                sample_rate=self.spec_config.sample_rate,
-                n_fft=self.spec_config.n_fft,
-                n_mels=self.spec_config.n_mels,
-                freq_min=self.spec_config.freq_min,
-                freq_max=self.spec_config.freq_max,
-                window_size=self.spec_config.window_size,
-                hop_size=self.spec_config.hop_size,
-                apply_log=self.spec_config.apply_log)
-            slices: Sequence[np.ndarray] = spec_reshape.slice_spectrogram(
-                spectrogram=mel_spec,
-                slice_size=self.reshape_config.slice_size,
-                stride_size=self.reshape_config.stride_size)
-            flat_slices: Sequence[np.ndarray] = list()
-            for slice in slices:
-                flat: np.ndarray = spec_reshape.flatten_slice(slice, copy=True)
-                flat_slices.append(flat)
-            proj_slices: np.ndarray = fe_skm_proj.proj_onnx_skm(flat_slices,
-                                                                self.skms,
-                                                                dtype=dtype)
-            pool_slices: Sequence[np.ndarray] = fe_pool.apply_pool_func(
-                spec_projs=proj_slices,
-                pool_func=fe_pool.MeanStdPool(),
-                pool_size=self.pool_config.pool_size,
-                stride_size=self.pool_config.stride_size)
-            label = self.classifier.run(
-                output_names=["label"],
-                input_feed={"X": np.asarray(pool_slices, dtype)})[0]
+            label = self.__call__(curr_chunk)
             if callback is not None:
                 callback(label)
 
