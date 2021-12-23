@@ -49,16 +49,24 @@ def plot_acc_vs_n_samples(result: BiasVarianceResultBase):
 
 
 def plot_elbow(result: BiasVarianceResult):
-    plots: List[Tuple[Figure, Axes]] = list()
+    plots: List[List[Tuple[Figure, Axes]]] = list()
     n_clusters: np.ndarray = np.linspace(result.k_min, result.k_max,
                                          (result.k_max - result.k_min) //
                                          result.k_step)
-    for k_vals, k_scores in zip(result.k_vals, result.k_scores):
-        for curr_k_val, curr_k_scores in zip(k_vals, k_scores):
+    for curr_fold_k_vals, curr_fold_k_scores in zip(result.k_vals,
+                                                    result.k_scores):
+        curr_plots: List[Tuple[Figure, Axes]] = list()
+        plots.append(curr_plots)
+        for curr_class_k_val, curr_class_k_scores in zip(
+                curr_fold_k_vals, curr_fold_k_scores):
             fig, ax = plt.subplots()
-            ax.plot(n_clusters, curr_k_scores)
-            ax.axvline(curr_k_val, linewidth=0.5, linestyle='--')
-            plots.append((fig, ax))
+            ax.plot(n_clusters, curr_class_k_scores, label="Distortion Score")
+            ax.axvline(curr_class_k_val,
+                       linewidth=0.5,
+                       linestyle='--',
+                       label="Elbow Value")
+            ax.legend(loc='best', fontsize='medium')
+            curr_plots.append((fig, ax))
     return plots
 
 
@@ -71,10 +79,18 @@ for filename in filenames:
     result_path: str = os.path.join(METRICS_DIR_PATH, filename)
     result = load_result(result_path)
     # elbow plot
-    plots: List[Tuple[Figure, Axes]] = plot_elbow(result)
+    plots: List[List[Tuple[Figure, Axes]]] = plot_elbow(result)
+    for curr_label, curr_class_plots in enumerate(plots[-2]):
+        elbow_fig_filename: str = str.format(
+            "elbow_{}_", curr_label) + os.path.splitext(filename)[0] + ".png"
+        elbow_fig_path: str = os.path.join(METRICS_DIR_PATH,
+                                           elbow_fig_filename)
+        curr_class_plots[0].savefig(elbow_fig_path, dpi=300)
     # accuracy vs number of data points
     acc_fig, acc_ax = plot_acc_vs_n_samples(result)
-    fig_filename: str = "acc_" + os.path.splitext(filename)[0] + ".png"
-    fig_path: str = os.path.join(METRICS_DIR_PATH, fig_filename)
-    # acc_fig.savefig(fig_path, dpi=300)
+    acc_fig_filename: str = "acc_" + os.path.splitext(filename)[0] + ".png"
+    acc_fig_path: str = os.path.join(METRICS_DIR_PATH, acc_fig_filename)
+    acc_fig.savefig(acc_fig_path, dpi=300)
+plt.close("all")
+
 # %%
