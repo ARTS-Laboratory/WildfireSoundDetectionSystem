@@ -46,6 +46,10 @@ class FitSkmPcaSvcResult:
     # shape of list (n_k_vals, n_folds)
     classifiers: List[List[Union[Pipeline, ClassifierMixin]]]
     # shape of list (n_k_vals, n_folds)
+    train_accs: List[List[float]]
+    # shape of list (n_k_vals, n_folds)
+    val_accs: List[List[float]]
+    # shape of list (n_k_vals, n_folds)
     # shape of np.ndarray (n_labels, n_labels) in the order of (true, pred)
     confusion_mats: List[List[np.ndarray]]
 
@@ -53,6 +57,8 @@ class FitSkmPcaSvcResult:
         self.k_vals = k_vals
         self.skms = list()
         self.classifiers = list()
+        self.train_accs = list()
+        self.val_accs = list()
         self.confusion_mats = list()
 
 

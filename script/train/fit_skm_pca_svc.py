@@ -36,6 +36,8 @@ def main(args: List[str]):
     for k_val in configs.k_vals:
         skms: List[List[SphericalKMeans]] = list()
         classifiers: List[Union[Pipeline, ClassifierMixin]] = list()
+        train_accs: List[float] = list()
+        val_accs: List[float] = list()
         confusion_mats: List[np.ndarray] = list()
         for curr_fold in range(configs.dataset_config.k_folds):
             train_dataset, val_dataset = dataset_generator.get_train_val_dataset(
@@ -72,6 +74,8 @@ def main(args: List[str]):
             # update result
             skms.append(curr_skms)
             classifiers.append(classifier)
+            train_accs.append(train_acc)
+            val_accs.append(val_acc)
             confusion_mats.append(confusion_mat)
         result.skms.append(skms)
         result.classifiers.append(classifiers)
