@@ -18,7 +18,8 @@ from sklearn_plugins.cluster.spherical_kmeans import SphericalKMeans
 
 #%%
 # AUDIO_PATH: str = "../test/test_dataset/folder_dataset/0_0.wav"
-AUDIO_PATH: str = "../test/test_audio/fire_01.wav"
+# AUDIO_PATH: str = "../test/test_audio/fire_test.wav"
+AUDIO_PATH: str = "../test/test_audio/forest_test.wav"
 CONFIG_ROOT_PATH: str = "../../config"
 MODEL_ROOT_PATH: str = "../../model/binary_fire/spec_00_reshape_00_skm_00"
 SPEC_CONFIG_PATH: str = os.path.join(CONFIG_ROOT_PATH,
@@ -29,12 +30,13 @@ POOL_CONFIG_PATH: str = os.path.join(CONFIG_ROOT_PATH,
                                      "feature_engineering/pool/02.json")
 
 #%%
-CURR_VAL_FOLD: int = 1
+CURR_VAL_FOLD: int = 9
 VAL_PATH_STUB: str = "val_{:02d}"
 CLASS_PATH_STUB: str = "class_{:02d}"
-SKM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "skm")
-# SVM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "rfc", "pool_02_rfc_02")
-SVM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "rfc", "pool_02_pca_00_rfc_02")
+SKM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "skm", "165_140")
+SVM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "svm",
+                                        "165_140_pool_02_svc_01")
+# SVM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "rfc", "pool_02_pca_00_rfc_02")
 # SVM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "rfc", "augment_01_pool_02_pca_00_rfc_02")
 
 #%%
@@ -50,6 +52,7 @@ sound_wave, _ = rosa_core.load(path=AUDIO_PATH,
                                sr=spec_config.sample_rate,
                                mono=True)
 #%%
+# hop size = window_size
 mel_spec, mel_freq, mel_time = spec_transform.transform_mel_spectrogram(
     sound_wave=sound_wave,
     sample_rate=spec_config.sample_rate,
@@ -58,7 +61,7 @@ mel_spec, mel_freq, mel_time = spec_transform.transform_mel_spectrogram(
     freq_min=spec_config.freq_min,
     freq_max=spec_config.freq_max,
     window_size=spec_config.window_size,
-    hop_size=spec_config.hop_size,
+    hop_size=spec_config.window_size,
     apply_log=spec_config.apply_log)
 #%%
 slices: Sequence[np.ndarray] = spec_reshape.slice_spectrogram(
@@ -114,3 +117,5 @@ pred = svc.predict(np.asarray(pool_slices))
 
 #%%
 np.bincount(pred, minlength=2)
+
+# %%
