@@ -137,9 +137,10 @@ def get_svc(svc_path: str) -> InferenceSession:
 
 #%%
 # AUDIO_PATH: str = "../test/test_dataset/folder_dataset/0_0.wav"
-AUDIO_PATH: str = "../test/test_audio/fire_01.wav"
+AUDIO_PATH: str = "../test/test_audio/forest_test.wav"
 CONFIG_ROOT_PATH: str = "../../config"
-MODEL_ROOT_PATH: str = "../../model/binary_fire/spec_00_reshape_00_skm_00"
+# MODEL_ROOT_PATH: str = "../../model/binary_fire/spec_00_reshape_00_skm_00"
+MODEL_ROOT_PATH: str = "../../model/binary_fire/spec_00_reshape_00_skm_00/100_100/dtype_float32"
 SPEC_CONFIG_PATH: str = os.path.join(CONFIG_ROOT_PATH,
                                      "preprocessing/spec/00.json")
 RESHAPE_CONFIG_PATH: str = os.path.join(CONFIG_ROOT_PATH,
@@ -154,8 +155,9 @@ SKM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "skm")
 #                                         "pool_02_svc_04")
 # SVM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "rfc",
 # "pool_02_pca_00_rfc_02")
-SVM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "svm",
-                                        "augment_01_pool_02_pca_00_svc_01")
+# SVM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "svm",
+#                                         "augment_01_pool_02_pca_00_svc_01")
+SVM_MODEL_ROOT_PATH: str = os.path.join(MODEL_ROOT_PATH, "svm")
 CLASS_SKM_PATH_STUB: str = os.path.join(CLASS_PATH_STUB, "model.onnx")
 CURR_VAL_SKM_PATH_STUB: str = skl_skm_laoder.get_curr_val_skm_path_stub(
     curr_val_fold=CURR_VAL_FOLD,
@@ -167,7 +169,7 @@ CURR_VAL_SVC_PATH: str = get_svc_path(curr_val_fold=CURR_VAL_FOLD,
                                       val_path_stub=VAL_PATH_STUB)
 
 #%%
-dtype = np.float64
+dtype = np.float32
 
 #%%
 spec_config: conf_spec.MelSpecConfig = conf_spec.get_spec_config_from_json(
