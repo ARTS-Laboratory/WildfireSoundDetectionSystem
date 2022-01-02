@@ -99,8 +99,7 @@ for filename in filenames:
     export_dir_path: str = os.path.join(MODEL_DIR_ROOT_PATH,
                                         os.path.splitext(filename)[0])
     os.makedirs(export_dir_path, exist_ok=True)
-    for k_val, cfms in zip(result.k_vals,
-                                                 result.confusion_mats):
+    for k_val, cfms in zip(result.k_vals, result.confusion_mats):
         cfm_fig, cfm_ax = plot_cfm(np.asarray(cfms))
         cfm_fig_path: str = os.path.join(export_dir_path,
                                          str.format("{}.png", k_val))
