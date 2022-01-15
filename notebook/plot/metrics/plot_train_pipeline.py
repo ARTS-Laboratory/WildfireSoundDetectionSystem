@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
+from matplotlib.colorbar import Colorbar
 from script.fit_skm_pca_svc import FitSkmPcaSvcResult
 import sklearn.metrics
 #%%
@@ -33,9 +34,12 @@ def plot_cfm(cfms: np.ndarray):
     dsp = sklearn.metrics.ConfusionMatrixDisplay(avg_cfm,
                                                  display_labels=np.asarray(
                                                      ["fire", "forest"]))
-    dsp.plot(cmap='Greys', values_format="d")
+    dsp.plot(cmap='Greys', values_format="d", colorbar=False)
+    cbar: Colorbar = dsp.figure_.colorbar(dsp.im_, ax=dsp.ax_)
+    cbar.set_label("Number of Slices")
     dsp.ax_.set_xlabel("Prediction")
     dsp.ax_.set_ylabel("Truth")
+    # dsp.figure_.
     plt.tight_layout()
     return dsp.figure_, dsp.ax_
 

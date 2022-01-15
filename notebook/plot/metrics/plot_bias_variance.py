@@ -65,6 +65,8 @@ def plot_elbow(result: BiasVarianceResult):
                        linewidth=0.5,
                        linestyle='--',
                        label="Elbow Value")
+            ax.set_ylabel("Distortion Score")
+            ax.set_xlabel("Number of Clusters (k)")
             ax.legend(loc='best', fontsize='medium')
             curr_plots.append((fig, ax))
     return plots
