@@ -153,38 +153,6 @@ def get_svc(svc_path: str) -> InferenceSession:
     return InferenceSession(svc_path)
 
 
-def main(args: List[str]):
-    configs = parse_args(args)
-
-    skms: Sequence[InferenceSession] = skl_skm_laoder.load_onnx_skms(
-        os.path.join(configs.skms_path, "class_{:02d}", "model.onnx"), 2)
-    classifier: InferenceSession = get_svc(configs.classifier_path)
-
-    wav_stream = WaveStream(wav_path=configs.audio_path,
-                            sample_rate=configs.spec_config.sample_rate,
-                            chunk_sec=1.0)
-    audio_classifier = AudioClassifier(skms=skms,
-                                       classifier=classifier,
-                                       spec_config=configs.spec_config,
-                                       reshape_config=configs.reshape_config,
-                                       pool_config=configs.pool_config,
-                                       dtype=configs.dtype)
-    res = list()
-    times = list()
-    for curr_chunk in wav_stream:
-        start_time = time.time()
-        curr_label = audio_classifier(curr_chunk)
-        end_time = time.time()
-        res.append(curr_label)
-        proc_time = end_time - start_time
-        times.append(proc_time)
-    res_np = np.concatenate(tuple(res), axis=None)
-    print(np.bincount(res_np, minlength=2))
-    print(
-        str.format("total_time {} mean_time {} std_time {}", np.sum(times),
-                   np.mean(times), np.std(times)))
-
-
 def get_parser() -> ArgumentParser:
     parser = ArgumentParser(parents=[
         conf_spec.SpecConfigArgumentParser(),
@@ -226,6 +194,38 @@ def parse_args(args: List[str]):
         pool_config=conf_pool.get_pool_config_from_json(argv.pool_config_path),
         dtype=dtype)
     return configs
+
+
+def main(args: List[str]):
+    configs = parse_args(args)
+
+    skms: Sequence[InferenceSession] = skl_skm_laoder.load_onnx_skms(
+        os.path.join(configs.skms_path, "class_{:02d}", "model.onnx"), 2)
+    classifier: InferenceSession = get_svc(configs.classifier_path)
+
+    wav_stream = WaveStream(wav_path=configs.audio_path,
+                            sample_rate=configs.spec_config.sample_rate,
+                            chunk_sec=1.0)
+    audio_classifier = AudioClassifier(skms=skms,
+                                       classifier=classifier,
+                                       spec_config=configs.spec_config,
+                                       reshape_config=configs.reshape_config,
+                                       pool_config=configs.pool_config,
+                                       dtype=configs.dtype)
+    res = list()
+    times = list()
+    for curr_chunk in wav_stream:
+        start_time = time.time()
+        curr_label = audio_classifier(curr_chunk)
+        end_time = time.time()
+        res.append(curr_label)
+        proc_time = end_time - start_time
+        times.append(proc_time)
+    res_np = np.concatenate(tuple(res), axis=None)
+    print(np.bincount(res_np, minlength=2))
+    print(
+        str.format("total_time {} mean_time {} std_time {}", np.sum(times),
+                   np.mean(times), np.std(times)))
 
 
 if __name__ == '__main__':
