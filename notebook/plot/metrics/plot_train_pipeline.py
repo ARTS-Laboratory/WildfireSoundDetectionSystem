@@ -36,7 +36,7 @@ def plot_cfm(cfms: np.ndarray):
                                                      ["fire", "forest"]))
     dsp.plot(cmap='Greys', values_format="d", colorbar=False)
     cbar: Colorbar = dsp.figure_.colorbar(dsp.im_, ax=dsp.ax_)
-    cbar.set_label("Number of Slices")
+    cbar.set_label("Number of Decorrelated Vectors")
     dsp.ax_.set_xlabel("Prediction")
     dsp.ax_.set_ylabel("Truth")
     # dsp.figure_.
